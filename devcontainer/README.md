@@ -4,7 +4,7 @@ Running `claude` in an isolated Docker container is recommended! Use the `claude
 
 ### Installation
 
-1. Install the prerequistes listed [here](https://github.com/trailofbits/claude-code-devcontainer?tab=readme-ov-file#prerequisites) - which is `docker`, `@devcontainers/cli`, `claude-code-devcontainer `.
+1. Install the prerequistes (**using the Reanblock fork**) listed [here](https://github.com/reanblock/claude-code-devcontainer?tab=readme-ov-file#prerequisites) - which is `docker`, `@devcontainers/cli`, `claude-code-devcontainer `.
 2. In each new project you need to run `devc .` once only.
 3. Now you can enter the container to start working using `devc shell`.
 4. Spin up `claude` and check that it is running with `bypassPermissions` set and the hooks are enabled (run `cat ~/.claude/settings.json` in your contaier)
