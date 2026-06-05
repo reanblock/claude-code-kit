@@ -70,6 +70,15 @@ visual_style: cinematic realism
 
 # [Title] — Video Generation Script
 
+> ## ⚠️ STRICT COMPLIANCE — READ FIRST (for the AI video generator)
+> **This script is the single source of truth. Follow it EXACTLY. Do NOT change, reinterpret, embellish, or "improve" anything.**
+> - **Do not alter the assets.** Every character, location, prop, and wardrobe item must match its Asset Bible description exactly — same appearance, same wardrobe, same details, every time it appears.
+> - **Do not alter the scenes or storyboard.** Render the scenes and shots in the exact order given, with the exact framing, camera, blocking, and action specified. Do not add, remove, reorder, merge, or split shots.
+> - **Do not alter the dialogue.** Speak every line verbatim, attributed to the specified character, with the given delivery. Do not paraphrase, rewrite, add, or cut lines.
+> - **Do not alter music, ambient sound, on-screen text, or timing.** Use exactly what each shot specifies.
+> - **Invent nothing that isn't written here, and drop nothing that is.** If a detail seems missing, render only what is specified rather than improvising.
+> - **Honor the generation settings** in the frontmatter (models, length, aspect ratio, resolution, visual style) without deviation.
+
 > **Source:** [brief note on the source story]
 > **Logline:** [one-sentence summary of the story]
 > **Visual style:** [overall look — e.g. "warm naturalistic 35mm, shallow depth of field, muted autumn palette"]
@@ -139,6 +148,10 @@ The YAML frontmatter at the top of the file carries the generation settings the 
 - **visual_style** — short style descriptor (default `cinematic realism`); keep it consistent with the `Visual style` noted in the human-readable header below.
 
 If the user names a different image, video, music, or narration model, runtime, aspect ratio, resolution, or style, override the corresponding field with their choice.
+
+## Strict Compliance Banner
+
+Every generated script **must** include the **⚠️ STRICT COMPLIANCE — READ FIRST** banner directly under the title, exactly as shown in the template (above the Source/Logline header). This banner is a direct, non-negotiable instruction to the downstream AI video generator telling it to follow the script verbatim — assets, scenes, storyboard, dialogue, music, sound, and generation settings — and to change, add, or drop nothing. Never omit, soften, or shorten it. Keep its wording emphatic and unambiguous so the video tool cannot treat the script as a loose suggestion.
 
 ## Field Guidance
 
