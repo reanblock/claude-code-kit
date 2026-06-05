@@ -40,6 +40,8 @@ For anything the prose leaves unspecified, **invent a concrete, plausible descri
 
 - Give each asset a **stable ID/name in CAPS** (e.g. `MARIA`, `THE OLD KITCHEN`, `BRASS KEY`) and reference that exact ID everywhere it appears.
 - Descriptions must be **visual and specific**: age, build, hair, distinguishing features, skin tone, default wardrobe for characters; architecture, materials, lighting, era, scale, mood for locations.
+- **Specify spatial geography strictly — this matters as much as appearance.** For every location, pin down its **layout and boundaries**: the size and shape of the space, where doors/windows/openings are and **what lies beyond each one**, which spaces are **adjacent** and how they connect, and what is **inside vs. outside** the space. State where key objects and furniture sit **relative to each other and to the room** (e.g. "the drawer is in the dresser against the **east wall, left of the window**; the door to the hallway is in the **opposite wall**"). When the action crosses a threshold (a character walks to a door, looks through a window, moves between rooms), the geography that action depends on must be explicit and unambiguous — a door leads to a **named, separate space**, not vaguely "out." Generators have no spatial common sense; if you don't fix the geography, they invent it, and one room's interior bleeds into another.
+- **Keep object positioning consistent across every shot.** Once an object, door, or area is placed, it stays there — don't let a door move walls or a prop teleport between shots. Reference positions by the canonical layout you defined for the location.
 - Keep each canonical description **self-contained** — the generator may see it in isolation, so don't rely on context from elsewhere in the document.
 - Once defined, refer back by ID rather than re-describing, so the asset stays consistent shot to shot.
 
@@ -64,7 +66,7 @@ music_model: Suno 5
 narration_model: MiniMax Speech 2.8 HD
 length: 5 min                 # target total runtime (5 min or less)
 aspect_ratio: "16:9"          # 16:9 landscape
-resolution: 720p
+resolution: 1080p
 visual_style: cinematic realism
 ---
 
@@ -76,6 +78,7 @@ visual_style: cinematic realism
 > - **Do not alter the scenes or storyboard.** Render the scenes and shots in the exact order given, with the exact framing, camera, blocking, and action specified. Do not add, remove, reorder, merge, or split shots.
 > - **Do not alter the dialogue.** Speak every line verbatim, attributed to the specified character, with the given delivery. Do not paraphrase, rewrite, add, or cut lines.
 > - **Do not alter music, ambient sound, on-screen text, or timing.** Use exactly what each shot specifies.
+> - **One unified frame per shot — never split the screen.** Render each shot as a single, continuous camera view. Do NOT split, divide, or partition the frame into multiple panels, insets, side-by-side halves, or picture-in-picture (e.g. action on one side and a still of a prop on the other), and do NOT spontaneously cut to an insert of a prop. The only exception is when a shot's Camera field **explicitly** requests a split-screen, inset, or montage. If it doesn't say so, keep one whole frame.
 > - **Invent nothing that isn't written here, and drop nothing that is.** If a detail seems missing, render only what is specified rather than improvising.
 > - **Honor the generation settings** in the frontmatter (models, length, aspect ratio, resolution, visual style) without deviation.
 
@@ -97,7 +100,7 @@ visual_style: cinematic realism
 
 ### Locations
 
-**THE OLD KITCHEN** — [architecture, era, materials, furnishings, lighting quality, time-of-day default, mood]. [...]
+**THE OLD KITCHEN** — [architecture, era, materials, furnishings, lighting quality, time-of-day default, mood]. **Layout & geography:** [size/shape of the space; where doors, windows and openings are and **what each leads to**; adjacent spaces and how they connect; what is inside vs. outside; where key furniture/objects sit relative to each other and the walls]. [...]
 
 **[NEXT LOCATION]** — [...]
 
@@ -144,7 +147,7 @@ The YAML frontmatter at the top of the file carries the generation settings the 
 - **narration_model** — the model used for narration / voiceover (text-to-speech). Default: `MiniMax Speech 2.8 HD`.
 - **length** — target total runtime, `5 min` or less.
 - **aspect_ratio** — default `"16:9"` (landscape). Keep the value quoted so YAML doesn't parse it as a sexagesimal number.
-- **resolution** — default `720p`.
+- **resolution** — default `1080p`.
 - **visual_style** — short style descriptor (default `cinematic realism`); keep it consistent with the `Visual style` noted in the human-readable header below.
 
 If the user names a different image, video, music, or narration model, runtime, aspect ratio, resolution, or style, override the corresponding field with their choice.
@@ -157,7 +160,7 @@ Every generated script **must** include the **⚠️ STRICT COMPLIANCE — READ 
 
 Fill every field on every shot. If a field genuinely doesn't apply, write `—` rather than omitting it, so the structure stays predictable for downstream parsing.
 
-- **Camera** — Specify both **framing** (wide / medium / close-up / over-the-shoulder / POV / aerial) and **movement** (static, pan, tilt, dolly, tracking, crane, handheld, zoom). Add lens feel where it matters (shallow vs deep focus, wide-angle vs telephoto). Keep moves achievable in a single clip.
+- **Camera** — Specify both **framing** (wide / medium / close-up / over-the-shoulder / POV / aerial) and **movement** (static, pan, tilt, dolly, tracking, crane, handheld, zoom). Add lens feel where it matters (shallow vs deep focus, wide-angle vs telephoto). Keep moves achievable in a single clip. **Default every shot to a single unified frame.** Only ever write a split-screen, inset, picture-in-picture, or in-frame montage if you genuinely intend it — and then say so explicitly (e.g. "split-screen: left half X, right half Y"). If you don't intend it, you don't need to write anything; the strict-compliance banner already forbids the generator from splitting on its own.
 - **Action / blocking** — Reference characters and props by their Asset Bible ID. Describe observable behavior and expression, not interior states. One beat per shot. **Spell out the physical micro-actions in order** — see *Specify the physical sequence* below. Video models don't reason about cause and effect; they continue the most common action pattern unless you state exactly what the body does at each beat, especially where a character stops short of, avoids, or reverses an expected action.
 - **Dialogue** — Attribute every line to a character ID. Add a short parenthetical delivery note (tone, volume, emotion) when it isn't obvious. Keep lines as the characters would actually say them.
 - **Music** — Describe the **emotional function and instrumentation** ("sparse solo cello, mournful, low volume"), not a copyrighted track. Note when a cue starts, swells, or cuts. Use "continues" to maintain continuity across shots.
@@ -177,6 +180,8 @@ Fill every field on every shot. If a field genuinely doesn't apply, write `—` 
   > ✅ Explicit: "DARA approaches the restroom door and raises his hand toward the handle. **Before touching it**, his eyes catch the OUT-OF-ORDER SIGN taped at eye level. His hand stops mid-air and pulls back. He pauses, takes half a step back, then turns away from the door and walks off toward the elevator. He never touches the handle; the door stays shut."
 
   Name what does **not** happen when an expected action is being avoided ("he never touches the handle," "the cup is never lifted," "she does not sit"). The more "what-actually-happens" detail you give — body position, the precise stop, hand reaching/pausing/withdrawing, gaze shifts, weight changes — the less the model has to invent. Split the sequence across numbered shots if a single beat can't hold it (still respecting the 15-second cap).
+- **One unified frame — don't trigger an accidental split-screen.** Some generators (notably Seedance 2.0) will occasionally split the frame into two panels when a single shot describes **two distinct visual focal points** — e.g. "NEARY crouched over THE BAG" *and* the bag itself described as a prop. The model pattern-matches this to a "reveal" or split-frame composition and renders the action on one side with a still of the prop on the other, even though nothing asked for it. To avoid it: within one shot, **keep attention on a single subject and integrate props into that same action** rather than describing them as a separate focal element ("NEARY's hands work at the worn leather duffel, unzipping it" — not "NEARY crouches. THE DUFFEL: scuffed brown leather, brass zip."). Put a prop's standalone canonical description in the Asset Bible, not inside the shot's action line. If you truly want two views, give the prop its **own numbered insert shot** instead of stacking both into one. Reserve actual split-screen for when you explicitly write it in the Camera field.
+- **Nail the geography — where things are matters as much as what they are.** Generators have no spatial common sense; if a location's layout isn't fixed, they invent it shot to shot and merge spaces that should be separate. A shot set "in the office" with a "restroom door" can render the restroom's interior — toilet stalls and all — *inside* the office, because nothing said the restroom is a **separate space beyond a closed door in the wall**. Define each location's layout once in the Asset Bible (doors and what they lead to, adjacent rooms, inside vs. outside, where objects sit relative to the walls and each other), then keep it consistent in every shot. When action crosses a threshold, state explicitly which space the camera is in, that the door is a boundary, and where the far space lies — and if a character stops at a **closed** door without entering, say the far room stays **unseen** and don't describe its interior (naming the contents of an off-screen room invites the model to draw them in-frame). Doors, walls, and windows are boundaries between named spaces — never leave "beyond" vague.
 - **One beat per shot, max 15 seconds.** Generators handle short, single-action clips far better than long, multi-action instructions — and they cap out at ~15 seconds per clip. Every shot must be performable within 15 seconds; if it can't, split it.
 - **Commit to invented detail.** Where the source is silent, decide and state it. Flag invented choices so the user can override.
 - **Stay tool-agnostic.** Use plain, descriptive film language any generator can interpret; don't assume a specific product's parameters.
