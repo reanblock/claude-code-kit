@@ -53,9 +53,21 @@ For anything the prose leaves unspecified, **invent a concrete, plausible descri
 
 ## Output Format
 
-Produce a single Markdown file with this exact top-level structure:
+Produce a single Markdown file with this exact top-level structure. Begin the file with a **YAML frontmatter block** carrying the generation settings the AI video platform reads, then the human-readable header:
 
 ```markdown
+---
+# Video generation settings — read by the AI video platform
+image_model: Nano Banana Pro
+video_model: Seedance 2.0 Fast
+music_model: Suno 5
+narration_model: MiniMax Speech 2.8 HD
+length: 5 min                 # target total runtime (5 min or less)
+aspect_ratio: "16:9"          # 16:9 landscape
+resolution: 720p
+visual_style: cinematic realism
+---
+
 # [Title] — Video Generation Script
 
 > **Source:** [brief note on the source story]
@@ -112,6 +124,21 @@ Produce a single Markdown file with this exact top-level structure:
 
 ### SCENE 2 — [...]
 ```
+
+## Frontmatter Guidance
+
+The YAML frontmatter at the top of the file carries the generation settings the AI video platform reads. Always include it, and keep these defaults unless the user specifies otherwise:
+
+- **image_model** — the model used for image generation. Default: `Nano Banana Pro`.
+- **video_model** — the model used for video generation. Default: `Seedance 2.0 Fast`.
+- **music_model** — the model used for music generation. Default: `Suno 5`.
+- **narration_model** — the model used for narration / voiceover (text-to-speech). Default: `MiniMax Speech 2.8 HD`.
+- **length** — target total runtime, `5 min` or less.
+- **aspect_ratio** — default `"16:9"` (landscape). Keep the value quoted so YAML doesn't parse it as a sexagesimal number.
+- **resolution** — default `720p`.
+- **visual_style** — short style descriptor (default `cinematic realism`); keep it consistent with the `Visual style` noted in the human-readable header below.
+
+If the user names a different image, video, music, or narration model, runtime, aspect ratio, resolution, or style, override the corresponding field with their choice.
 
 ## Field Guidance
 
