@@ -48,6 +48,7 @@ For anything the prose leaves unspecified, **invent a concrete, plausible descri
 - Start a new scene on a **location change**, a **time jump**, or a **major dramatic shift**.
 - Within a scene, break the action into **numbered shots** when the camera, framing, or focus changes — this gives the generator digestible, single-action clips rather than one impossibly long instruction.
 - Keep each shot's action to **one continuous, generatable beat** (roughly what could be a 3–10 second clip). Don't pack a whole conversation or a montage into a single shot.
+- **Hard 15-second limit per shot.** AI video generators produce a maximum of ~15 seconds per continuous clip, so every shot must describe an amount of action that can plausibly play out in **15 seconds or less**. You don't need to print a duration in the shot, but the instructions you write must respect it: if a beat would take longer to perform than 15 seconds (a long speech, a slow walk across a room, multiple sequential actions), split it into two or more numbered shots. When in doubt, err toward shorter — a shot that overruns 15 seconds cannot be generated as a single clip.
 - Convert narration into **what is seen and heard**. Internal thoughts, backstory, and authorial commentary must be translated into visible action, expression, dialogue, or an explicit on-screen device (voiceover, text on screen) — never left as un-filmable prose.
 
 ## Output Format
@@ -128,7 +129,7 @@ Fill every field on every shot. If a field genuinely doesn't apply, write `—` 
 - **Consistency over novelty.** The same asset must be described identically everywhere — reuse IDs, don't re-improvise. This is the single most important rule for coherent generated video.
 - **Show, don't narrate.** Every line of the source must become something seeable or hearable. If you can't film it, convert it (to action, expression, dialogue, or VO).
 - **Be concrete and visual.** Replace vague prose ("she felt uneasy") with directable specifics ("MARIA's hand stills on the cup; her eyes flick to the window").
-- **One beat per shot.** Generators handle short, single-action clips far better than long, multi-action instructions.
+- **One beat per shot, max 15 seconds.** Generators handle short, single-action clips far better than long, multi-action instructions — and they cap out at ~15 seconds per clip. Every shot must be performable within 15 seconds; if it can't, split it.
 - **Commit to invented detail.** Where the source is silent, decide and state it. Flag invented choices so the user can override.
 - **Stay tool-agnostic.** Use plain, descriptive film language any generator can interpret; don't assume a specific product's parameters.
 
