@@ -23,7 +23,8 @@ The output is one Markdown file. It is human-readable and editable, and works as
 3. **Segment the narrative into scenes.** A new scene begins on a change of location, a significant time jump, or a hard shift in dramatic beat.
 4. **Write the Asset Bible** with canonical descriptions (see rules below).
 5. **Write each Scene Block** following the exact template below, breaking long scenes into numbered shots.
-6. **Save the file** and present it to the user.
+6. **Audit every shot against the Shot Completeness Checklist** (below). Each shot is about to cost a paid render, so confirm every starred item is specified — or genuinely N/A — before finalizing. This pass is where you catch the gaps that otherwise surface only as a wasted render.
+7. **Save the file** and present it to the user.
 
 ## Asset Extraction Rules
 
@@ -80,6 +81,7 @@ visual_style: cinematic realism
 > - **Do not alter music, ambient sound, on-screen text, or timing.** Use exactly what each shot specifies.
 > - **One unified frame per shot — never split the screen.** Render each shot as a single, continuous camera view. Do NOT split, divide, or partition the frame into multiple panels, insets, side-by-side halves, or picture-in-picture (e.g. action on one side and a still of a prop on the other), and do NOT spontaneously cut to an insert of a prop. The only exception is when a shot's Camera field **explicitly** requests a split-screen, inset, or montage. If it doesn't say so, keep one whole frame.
 > - **Preserve each shot's stated start-position and screen direction.** Begin every shot from the exact positions and facing the action line states, and move characters and vehicles in the exact camera-relative direction written (toward/away from camera, foreground/background, screen-left/right). Do NOT invent a different start state, flip a direction, or reverse motion — a character told to leave must not enter, and a vehicle told to pull away must not drive backward.
+> - **Render only the specified people, and obey every constraint.** Include exactly the characters the shot lists and no others — no invented extras, no background crowds, no duplicate or twin of the same person. Keep all motion natural and **forward** — never loop, stutter, or reverse an action or a vehicle. Honor every "must not" the shot states, and keep physics real (things fall and stay, set-down objects don't drift, mirrors reflect only what's there).
 > - **Invent nothing that isn't written here, and drop nothing that is.** If a detail seems missing, render only what is specified rather than improvising.
 > - **Honor the generation settings** in the frontmatter (models, length, aspect ratio, resolution, visual style) without deviation.
 
@@ -124,16 +126,21 @@ visual_style: cinematic realism
 **Mood / lighting:** [emotional tone + concrete lighting description]
 
 #### Shot 1.1 — [shot type, e.g. "Wide establishing"]
-- **Camera:** [framing + movement — e.g. "slow dolly-in from doorway, eye level, shallow focus"]
-- **Action / blocking:** [what the characters do, by ID; one continuous beat]
+- **In frame:** [exactly who/what is present, by ID — and who is NOT, e.g. "MARIA alone; no other people, no background extras"]
+- **Camera:** [framing + height/angle + movement (in camera-relative direction) + lens/focus — e.g. "slow dolly-in from doorway, eye level, shallow focus pulling onto MARIA"]
+- **Start state:** [where each character/key object is and how they face at the first frame — carried over from the previous shot]
+- **Action / blocking:** [one continuous beat, by ID: micro-actions in order; eyelines; what each hand does/holds; the expression arc; the physics of any object/force; and what does NOT happen. Restate the essential start-position and any motion direction here too, since downstream tools may drop the other fields.]
+- **End state:** [where each character/key object ends and how they face at the last frame — becomes the next shot's start]
+- **Lighting:** [key source & direction, motivated practicals, consistency with the scene's time-of-day and neighbouring shots]
 - **Dialogue:**
-  - **MARIA:** "[line]" *(delivery note: e.g. whispered, trembling)*
+  - **MARIA:** "[line]" *(delivery note: e.g. whispered, trembling; mark (V.O.) / off-screen if the speaker is not visible)*
 - **Music:** [cue, instrumentation, intensity, or "none / continues from previous"]
-- **Ambient SFX:** [diegetic sounds beyond the obvious — e.g. "a dog barking offscreen in the distance, kettle starting to whistle"]
-- **On-screen text / VO:** [only if needed]
+- **Ambient SFX:** [diegetic sounds beyond the obvious — e.g. "a dog barking offscreen in the distance, kettle starting to whistle"; mark on-screen vs offscreen]
+- **On-screen text / VO:** [only if needed; give any in-world sign/screen text exactly, in quotes]
+- **Constraints (must-not):** [key negatives for this shot — e.g. "no split frame; MARIA alone; door stays shut; no reversed motion; no figure in the window reflection"]
 
 #### Shot 1.2 — [...]
-- [same fields]
+- [same fields; write `—` for any that genuinely don't apply]
 
 ### SCENE 2 — [...]
 ```
@@ -155,18 +162,64 @@ If the user names a different image, video, music, or narration model, runtime, 
 
 ## Strict Compliance Banner
 
-Every generated script **must** include the **⚠️ STRICT COMPLIANCE — READ FIRST** banner directly under the title, exactly as shown in the template (above the Source/Logline header). This banner is a direct, non-negotiable instruction to the downstream AI video generator telling it to follow the script verbatim — assets, scenes, storyboard, dialogue, music, sound, each shot's start-position and screen direction, and generation settings — and to change, add, or drop nothing. Never omit, soften, or shorten it. Keep its wording emphatic and unambiguous so the video tool cannot treat the script as a loose suggestion.
+Every generated script **must** include the **⚠️ STRICT COMPLIANCE — READ FIRST** banner directly under the title, exactly as shown in the template (above the Source/Logline header). This banner is a direct, non-negotiable instruction to the downstream AI video generator telling it to follow the script verbatim — assets, scenes, storyboard, dialogue, music, sound, each shot's start-position and screen direction, the exact in-frame cast and "must-not" constraints, and generation settings — and to change, add, or drop nothing. Never omit, soften, or shorten it. Keep its wording emphatic and unambiguous so the video tool cannot treat the script as a loose suggestion.
 
 ## Field Guidance
 
 Fill every field on every shot. If a field genuinely doesn't apply, write `—` rather than omitting it, so the structure stays predictable for downstream parsing.
 
+- **In frame** — List exactly which characters and key objects are present in the shot, by Asset Bible ID, and **state who/what is NOT** ("MARIA alone; no other people, no background extras"). Generators populate empty spaces with stray figures and bring absent characters back unless excluded. Each present character appears **once** — never a duplicate of the same person.
 - **Camera** — Specify both **framing** (wide / medium / close-up / over-the-shoulder / POV / aerial) and **movement** (static, pan, tilt, dolly, tracking, crane, handheld, zoom). Add lens feel where it matters (shallow vs deep focus, wide-angle vs telephoto). Keep moves achievable in a single clip. **Default every shot to a single unified frame.** Only ever write a split-screen, inset, picture-in-picture, or in-frame montage if you genuinely intend it — and then say so explicitly (e.g. "split-screen: left half X, right half Y"). If you don't intend it, you don't need to write anything; the strict-compliance banner already forbids the generator from splitting on its own. **Express movement in camera-relative terms** (toward/away from camera, foreground/background, screen-left/right) rather than world directions, which generators often flip.
 - **Action / blocking** — Reference characters and props by their Asset Bible ID. Describe observable behavior and expression, not interior states. One beat per shot. **Spell out the physical micro-actions in order** — see *Specify the physical sequence* below. Video models don't reason about cause and effect; they continue the most common action pattern unless you state exactly what the body does at each beat, especially where a character stops short of, avoids, or reverses an expected action. **Open each shot by restating where the characters are** (carried over from the previous shot), since the Setting field may not reach the generator.
-- **Dialogue** — Attribute every line to a character ID. Add a short parenthetical delivery note (tone, volume, emotion) when it isn't obvious. Keep lines as the characters would actually say them.
+- **Dialogue** — Attribute every line to a character ID, in **spoken order**, one speaker at a time. Add a short parenthetical delivery note (tone, volume, emotion) when it isn't obvious, and mark whether the speaker is **on-screen** (their lips move) or **off-screen / (V.O.)** so the generator animates the right mouth — or none. Keep lines as the characters would actually say them, and keep the order exactly as written (a generator must not swap who speaks first).
 - **Music** — Describe the **emotional function and instrumentation** ("sparse solo cello, mournful, low volume"), not a copyrighted track. Note when a cue starts, swells, or cuts. Use "continues" to maintain continuity across shots.
 - **Ambient SFX** — This is the **non-obvious** sound layer. The generator will usually infer obvious sounds (a door closing, footsteps). Call out atmosphere and off-screen sounds that set the scene: a dog barking somewhere unseen, distant traffic, rain on a tin roof, a clock ticking, murmuring crowd. Mark whether a source is **on-screen** or **offscreen**.
-- **On-screen text / VO** — Use for titles, location/time cards, or when narration must be preserved as voiceover because it can't be made visual.
+- **On-screen text / VO** — Use for titles, location/time cards, or when narration must be preserved as voiceover because it can't be made visual. Give any **in-world** text (a sign, a phone screen) **exactly and in quotes**, kept short — generators garble long or vague text.
+- **Start state / End state** — The body position, posture, and facing of each character (and the position of key objects) at the **first** and **last** frame of the shot. The start carries over from the previous shot; the end becomes the next shot's start (this is what makes a run of shots chain cleanly). Always also fold the start-position into the Action line, since downstream tools may drop this field.
+- **Lighting** — Name the key light **source and direction** and any motivated practicals (a phone's glow, a flickering tube, a lamp), and keep them consistent with the scene's time-of-day and the neighbouring shots. Lighting that changes within the shot (a screen lighting up, a light cutting out) is an action — write it.
+- **Constraints (must-not)** — The key negatives that protect this shot's risky elements: no split frame, exact cast / no extras, no reversed or looping motion, a door that stays shut, a character who does not enter, no unintended figure in a reflection, an unseen room that stays unseen. Stating the negative is often more reliable than stating the positive — see *Say what must NOT happen* below.
+
+## Shot Completeness Checklist
+
+Treat this as a **pre-flight for every shot**. Each rendered shot costs money, so before you finalize a shot — and certainly before it is sent to render — walk this list and confirm each item is either **explicitly specified** or genuinely not applicable. A gap here is exactly what the generator fills in for you, usually wrong. The starred (★) items are the high-cost failure modes seen most often — **never** leave a star unspecified.
+
+**Frame & camera**
+- ★ Shot size & framing (wide / medium / close-up / OTS / POV / aerial) **and** camera height/angle (eye, low, high, overhead, dutch).
+- ★ Camera movement, and the **camera-relative direction** of any move (toward/away, push/pull, screen-left/right) — never world-only ("out", "left").
+- Lens & focus: shallow/deep, what is in focus, any focus pull and onto whom.
+- ★ One single unified frame — no unintended split / inset / panel.
+
+**Who is in frame**
+- ★ Exactly **which characters/objects are present** (by ID) and **who is NOT** ("DARA alone; no extras"). Each character appears **once** — no twin/duplicate.
+- **Screen position** of each (foreground/background, left/right), **consistent** with the previous shot — don't swap a character's side between consecutive shots.
+
+**Performance (per character)**
+- ★ **Start state**: exact body position, posture, facing at the first frame (also restated in the Action line).
+- ★ **End state**: exact body position, posture, facing at the last frame (becomes the next shot's start).
+- **Facing / orientation** (toward camera / away / profile / ¾) and **eyeline** — where each character looks, beat by beat; an off-screen look names what's looked at and whether it's shown.
+- **Hands & held objects** — what each hand does and **what it holds**; pickups/putdowns written at the exact moment.
+- ★ **Expression & its arc** — the face at the start and how it visibly changes (brow, eyes, mouth), not a label like "scared".
+- **Micro-action sequence** — physical beats in order, the exact stopping point, and **what does NOT happen**.
+
+**Space, physics & continuity**
+- ★ **Geography** — which space the camera is in; where thresholds lead; what stays **unseen** beyond a closed door; no second location bleeding into frame.
+- ★ **Physics & forces** — how things actually move (gravity, weight, one-way/forward vehicle travel, liquids fall, a set-down object stays put); name impossible motion that must NOT happen.
+- **Appearance/state continuity** — wardrobe and **body state** carried over (sweat, dishevelment, injury, wet/dry, dirt) and any deliberate change.
+- **Prop & environment continuity** — objects stay where placed; things that shouldn't move don't; screens/clocks read consistently.
+- **Lighting** — source & direction, motivated practicals, matched to time-of-day and neighbouring shots.
+- **Reflections** — for any mirror/glass, what it reflects and what it must NOT.
+- **Time/weather** — consistent with the scene header and adjacent shots.
+
+**Sound & text**
+- **Dialogue** — every line attributed, in spoken order, one speaker at a time; on-screen (lips move) vs off-screen/(V.O.) marked.
+- **Music** — cue / instrumentation / intensity, or "continues".
+- **Ambient SFX** — the non-obvious layer; on-screen vs offscreen sources marked.
+- **In-world text** — any sign/screen text given **exactly**, short, in quotes.
+
+**Constraints**
+- ★ **Must-not list** — the negatives that protect everything above (no split frame, no extras/duplicates, no reversed motion, door stays shut, character doesn't enter, no figure in the mirror, unseen room stays unseen).
+
+**Before you spend a render:** re-read the shot against the ★ items especially. If any star is blank, the clip will likely come back wrong and waste credits — fix it first.
 
 ## Writing Principles
 
@@ -188,6 +241,14 @@ Fill every field on every shot. If a field genuinely doesn't apply, write `—` 
 - **State the start-position inside the Action line, not only the Setting.** A shot's opening positions ("both begin standing inside the lobby") are load-bearing: if they're missing, the generator invents a start state and usually picks the *most common* pattern (e.g. with glass doors + a warm lit room, people **entering** a building, not leaving it). Don't rely on the `Setting:`/header field alone to carry this — some downstream prompt builders compress, summarize, or drop that field when they turn the shot into a generation prompt, so the start-state silently vanishes. **Restate the essential start-position and facing inside the Action/blocking line itself**, where it survives, in addition to the Setting.
 - **Anchor direction to the camera, not to the world.** Video generators are unreliable with absolute directions — "out/in," "left/right," "north/south" are routinely ignored or flipped, and vehicles and walking characters frequently render **in reverse**. Specify motion **relative to the camera and the frame**: "moves away from camera," "toward camera," "from foreground to background," "exits screen-right." When a direction is the point of the shot (a character *leaving* vs. *entering*, a car *pulling away* vs. *reversing*), give the camera-relative direction **and name what must not happen** ("never toward camera," "never in reverse"). Pair world terms with camera terms — "interior → exterior, away from camera, into the dark background" is far more robust than "she goes outside" — and keep a vehicle's travel one-way and forward unless you explicitly want it to back up.
 - **Don't bundle ordered beats into one clip — and don't let a prompt builder do it either.** "Exit → look back → board" is three actions; a generator handed all three in one clip will scramble or loop them (the character re-does a beat, a vehicle plays backward). One beat per numbered shot. Be aware that an intermediate prompt-generation step may re-collapse your beats into a single clip (e.g. relabelling them "Shot 1 / Shot 2 / Shot 3" inside one generation) — so keep each storyboard shot to a **single beat that can't be meaningfully subdivided**, rather than a numbered "(1)(2)(3)" list that invites re-bundling.
+- **Pin the physics — the generator does not simulate the world.** Objects obey no gravity, weight, or momentum unless you say so. State how things actually move: a dropped object falls and stays down, a set-down prop stays put, liquid runs downward, a door swings and remains as left, a vehicle travels one way and forward. Name the physics that must NOT happen ("the tuk-tuk never rolls backward", "the bag does not move on its own"). Reversed, looping, or floating motion is a common default failure — forbid it explicitly.
+- **Direct the face — give the expression and its arc.** "Reacts" or "looks scared" underspecifies, and the model picks a generic face. State the expression at the start and how it **changes** across the shot, in visible terms — brow, eyes, mouth ("an easy grin that fades by degrees into hollow-eyed dread; lips part, jaw tightens"). If the emotional turn is the point of the shot, write it as a visible change, never a label.
+- **Direct the eyes, the facing, and the screen side.** Say where each character looks (eyeline), beat by beat, and which way the body faces (toward camera, away, profile, ¾); an off-screen look should name what is being looked at and whether it is shown. Keep each character on the **same side of frame** as the previous shot — generators flip screen position and break the line, so a two-shot can silently swap who's on the left.
+- **Track every hand and held object.** Generators drop, swap, or teleport things in hands. State what each hand is doing and **what it holds** ("his right hand grips the phone at chest height; his left stays at his side"), and keep a held prop continuous across the shots it appears in. Write the exact moment a character picks something up or sets it down.
+- **Say who is in frame — and who is not.** List the characters present in each shot by ID and explicitly exclude everyone else ("DARA alone; no other people, no background extras"). Left unsaid, generators fill empty offices and streets with stray figures, or bring an absent character back. Pair this with the no-duplicate rule: each present character appears exactly once.
+- **Say what must NOT happen.** The most reliable way to prevent a known failure is to forbid it by name. For every shot, state the key negatives that protect its risky elements — no split frame, no extra or duplicated people, no reversed motion, the door stays closed, the character does not enter, no figure in the mirror, the unseen room stays unseen. A short "must-not" line catches what positive description alone misses.
+- **Mind mirrors, glass, and reflections.** Reflective surfaces are a frequent failure: generators invent wrong reflections or place unintended figures in them. If a mirror, window, or glossy surface is in frame, state what it reflects and what it must NOT ("the lift's mirrored wall shows only DARA's reflection — no second figure"). For a deliberate reflection scare, describe it exactly and say at which beat it appears.
+- **Lock any in-world text.** Signs, screens, labels, and titles render as garbled glyphs when long or vague. Give the exact words, keep them short, and wrap the literal text in quotes ("the handwritten sign reads 'OUT OF ORDER'"). Say precisely what any screen displays; if a screen should be dark or blank, say so.
 - **One beat per shot, max 15 seconds.** Generators handle short, single-action clips far better than long, multi-action instructions — and they cap out at ~15 seconds per clip. Every shot must be performable within 15 seconds; if it can't, split it.
 - **Commit to invented detail.** Where the source is silent, decide and state it. Flag invented choices so the user can override.
 - **Stay tool-agnostic.** Use plain, descriptive film language any generator can interpret; don't assume a specific product's parameters.

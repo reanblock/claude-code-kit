@@ -82,6 +82,7 @@ When in doubt: **do less, not more. Copy, don't create.** Any creative addition 
   - **Scene:** Reference location/set (use scene element ID, e.g., `[Element_Office_Noir]`).
   - **Story Content:** Actions and dynamics of characters and key objects; dialogue and performance — **the exact lines from the script, verbatim** (spoken dialogue or internal monologue/voiceover). Use element IDs to reference characters.
   - **Camera Language:** Shot size, angle, movement — verbatim from the script where given; inferred only where absent.
+- **Carry over EVERY field the script's shot provides — do not drop the newer ones.** Modern scripts from the authoring skill specify more than Camera/Action/Dialogue. When the script's shot includes any of these fields, transfer them **verbatim** into the storyboard shot (and ensure they survive into the prompt; see `<write_the_prompt>`): **In frame** (exactly who/what is present + who is NOT — the cast and exclusions), **Start state** (opening positions/facing), **End state** (closing positions/facing — needed for keyframe chaining), **Lighting** (source/direction/practicals), and **Constraints / must-not** (the negative constraints). These are load-bearing: they are precisely the fields that, when dropped, cause wrong-cast, wrong-direction, merged-space, and reversed-motion renders. Never silently omit, summarize, or compress them.
 
 **How to design independent Audio Layers**
 - **Background music:** Use the music the script specifies for each shot/range, verbatim. If the script defines no music, you may add at least one global background music track whose style and tempo match the references or `Final_Video_Spec.md`; if the reference has clear tempo/mood changes, split the BGM segments and define ranges (each with its own `audio_id` and range). Never override or replace music the script specifies.
@@ -113,8 +114,17 @@ When in doubt: **do less, not more. Copy, don't create.** Any creative addition 
 **Language of dialogue/narration:** The spoken/voiceover content must always stay in the **exact language and wording of the script**, with the character's specified accent — even if the surrounding prompt scaffolding (camera directions, scene description) is written in another language for the model. Never translate or relocalize a character's lines.
 
 **BUILD EACH VIDEO-SHOT PROMPT FROM ITS STORYBOARD SHOT — DO NOT RE-AUTHOR FROM A BLANK PAGE.**
-When you generate the Seedance prompt for a shot (e.g., `Shot_1_2_...`), start from **that exact shot's storyboard entry** and transcribe its fields — Camera, Action/blocking, Dialogue, Music, Ambient SFX — into Seedance's four-layer order (Camera → Subject → Space → Audio). The storyboard shot is the spec; the Seedance prompt is a **reformatting** of it, not a fresh creative draft. Open the storyboard shot, copy its content across, and only then format it — never compose the shot from memory, the summary, or genre instinct.
-- **Traceability rule (apply before sending):** every clause in the finished prompt must trace back to a field in that storyboard shot or to an Asset Bible entry. If a clause came from neither — you invented it — delete it. Camera moves, character actions, beats, props, expressions, and lines that are not in the storyboard must NOT appear in the prompt.
+When you generate the Seedance prompt for a shot (e.g., `Shot_1_2_...`), start from **that exact shot's storyboard entry** and transcribe **all** of its fields into Seedance's four-layer order (Camera → Subject → Space → Audio). The storyboard shot is the spec; the Seedance prompt is a **reformatting** of it, not a fresh creative draft. Open the storyboard shot, copy its content across, and only then format it — never compose the shot from memory, the summary, or genre instinct.
+- **Transcribe every storyboard field — including the newer ones — and map them like this:**
+  - **In frame** (cast + exclusions) → name exactly the characters present (by element), and carry the exclusions into the prompt as explicit negatives: `no other people, no background extras, no duplicate of <character>`. This is mandatory — empty offices/streets otherwise fill with stray figures.
+  - **Start state** → the opening positions/facing, stated up front in the Subject/Space layers ("Dara begins frozen half-turned from the urinal, nearest camera"). Do not let the model invent a different starting tableau.
+  - **Action / blocking** → the Subject layer: the micro-actions in order, **eyelines** (where each looks), **what each hand does/holds**, the **expression arc**, and the **physics** of any object/force — all exactly as scripted. Keep motion **camera-relative and forward** (never reversed/looping); carry any "does NOT…" verbatim.
+  - **Camera** → the Camera layer: framing, angle, movement, with camera-relative direction.
+  - **Lighting** → the Space layer: key source/direction and practicals, verbatim from the script where given.
+  - **End state** → use as the shot's target final frame (and as the next shot's start frame for keyframe chaining); do not add post-end action.
+  - **Dialogue / Music / Ambient SFX** → the Audio layer, with the wrappers and speaker attribution below.
+  - **Constraints / must-not** → append **every** negative the storyboard lists to the prompt's negative-constraints block (alongside `no music`/`no subtitles`). These are not optional polish — they are the guardrails.
+- **Traceability rule (apply before sending):** every clause in the finished prompt must trace back to a field in that storyboard shot or to an Asset Bible entry. If a clause came from neither — you invented it — delete it. Camera moves, character actions, beats, props, expressions, and lines that are not in the storyboard must NOT appear in the prompt. Conversely, **do not drop** any field the storyboard provides — a missing In-frame exclusion, Start state, direction, or must-not is exactly what produces a wrong render.
 - **The image-prompt craft guidance below (the "6 Core Rules of Cinematic Prompts," keyframe "imagine the moment," auteur/atmosphere/subtext polish) does NOT apply to a video-shot prompt whose storyboard already specifies the shot.** Those are gap-fillers for genuinely empty fields only; never use them to embellish, re-block, or re-stage a shot the storyboard already describes.
 
 **Dialogue order and attribution (CRITICAL — this is what reassigns or reorders lines if you get it wrong):**
@@ -174,10 +184,10 @@ Locate the corresponding moment in the shot's `Description` and base the frame o
 - If the user uploaded voice/tone references for cross-shot voice consistency, input the `voice reference` as one of Seedance2.0's reference items, and clearly specify which character uses which reference audio.
 
 **Append movement/dynamic prompts in Seedance order (Camera → Subject → Space → Audio):**
-  1. **Camera** — Movement or shot/cut changes (e.g., `static → push-in`, `cut to new angle`, `orbit`, `pan`) — **from the script where given; inferred only where absent.**
-  2. **Subject** — Actions and expressions, **exactly as scripted** (who does what; facial beats).
-  3. **Space** — Position or environmental changes (subject/camera position relative to space; background movement; depth/layout shifts) — as scripted.
-  4. **Audio** — Dialogue (verbatim, if any), sound effects, and "no music" note if applicable (see below).
+  1. **Camera** — Movement or shot/cut changes (e.g., `static → push-in`, `cut to new angle`, `orbit`, `pan`), with **camera-relative direction** — **from the script where given; inferred only where absent.**
+  2. **Subject** — The **Start state** (opening positions/facing) first, then actions and expressions **exactly as scripted**: who does what, in order; **eyelines** (where each looks); **what each hand does/holds**; the **expression arc**; and the **physics** of any object/force (forward, never reversed/looping). Name exactly who is present and carry the **In-frame exclusions** ("no other people, no duplicate of X").
+  3. **Space** — Position or environmental changes (subject/camera position relative to space; background movement; depth/layout shifts) and the **Lighting** (source/direction/practicals) — as scripted. Keep distinct locations distinct; honor any reflection note (what a mirror/glass shows and must NOT show).
+  4. **Audio** — Dialogue (verbatim, attributed, in order, if any), sound effects, and "no music" note if applicable (see below).
 **Action Details (apply only when the script leaves action detail unspecified — never to overwrite scripted blocking):**
   - Reference specific body parts: hands, legs, head, shoulders, etc.
   - Add degree: magnitude, speed, intensity (e.g., *slowly raises one hand*, *snaps head left*).
@@ -194,6 +204,7 @@ These wrappers help the model distinguish **music**, **sound effects**, **dialog
   - Screen titles/chapters/subtitles text: `【...】`, e.g., 【Chapter One: Departure】 — exact text from the script.
 
 **Note:** Always include the following negative constraints for clean post-production output:
+- **Carry over the storyboard shot's entire `Constraints / must-not` field, verbatim**, into the prompt's negative block (e.g., `no split frame; Dara alone — no extras, no duplicate; door stays shut; no reversed motion; no figure in the mirror reflection; the unseen room stays unseen`). These guardrails are mandatory whenever the shot lists them.
 - If the storyboard indicates a shot has separate narration (voiceover, unrelated to character dialogue), do not write the narration text in the video prompt, to avoid conflicts with in-video dialogue.
 - To prevent unwanted background music, almost always include 'no music'.
 - Subtitles are added in post, so always include 'no subtitles'.
