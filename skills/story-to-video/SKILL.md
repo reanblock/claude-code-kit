@@ -138,6 +138,7 @@ visual_style: cinematic realism
 - **Ambient SFX:** [diegetic sounds beyond the obvious — e.g. "a dog barking offscreen in the distance, kettle starting to whistle"; mark on-screen vs offscreen]
 - **On-screen text / VO:** [only if needed; give any in-world sign/screen text exactly, in quotes]
 - **Constraints (must-not):** [key negatives for this shot — e.g. "no split frame; MARIA alone; door stays shut; no reversed motion; no figure in the window reflection"]
+- **Keyframe preview:** [`start` | `start+end` | `—` — lock the opening (and/or closing) frame as a cheap still for review BEFORE paying for the video render; use for precision/risky shots. Frames come from Start state / End state.]
 
 #### Shot 1.2 — [...]
 - [same fields; write `—` for any that genuinely don't apply]
@@ -178,6 +179,7 @@ Fill every field on every shot. If a field genuinely doesn't apply, write `—` 
 - **Start state / End state** — The body position, posture, and facing of each character (and the position of key objects) at the **first** and **last** frame of the shot. The start carries over from the previous shot; the end becomes the next shot's start (this is what makes a run of shots chain cleanly). Always also fold the start-position into the Action line, since downstream tools may drop this field.
 - **Lighting** — Name the key light **source and direction** and any motivated practicals (a phone's glow, a flickering tube, a lamp), and keep them consistent with the scene's time-of-day and the neighbouring shots. Lighting that changes within the shot (a screen lighting up, a light cutting out) is an action — write it.
 - **Constraints (must-not)** — The key negatives that protect this shot's risky elements: no split frame, exact cast / no extras, no reversed or looping motion, a door that stays shut, a character who does not enter, no unintended figure in a reflection, an unseen room that stays unseen. Stating the negative is often more reliable than stating the positive — see *Say what must NOT happen* below.
+- **Keyframe preview** — A production flag for the render tool: whether to lock this shot's frames as **still images first** (far cheaper than a video render) and approve them before committing to the paid video. Values: `start` (lock the opening frame, then the clip animates forward from it), `start+end` (lock both and let the tool interpolate between them — best for slow, deliberate moves: locked-off wides, slow push-ins, POV pans), or `—` (render the video directly — fine for cheap, low-risk shots). The frames come straight from this shot's **Start state** / **End state**, so they're already specified. Flag it for **precision- or risk-critical shots** — fine asset detail (a specific earring), thresholds/geography, exact character positioning, reveals, two interacting characters, or any shot that has failed a render before — so a wrong cast/room/framing/position is caught in a cheap still, not a wasted video credit.
 
 ## Shot Completeness Checklist
 
@@ -219,7 +221,7 @@ Treat this as a **pre-flight for every shot**. Each rendered shot costs money, s
 **Constraints**
 - ★ **Must-not list** — the negatives that protect everything above (no split frame, no extras/duplicates, no reversed motion, door stays shut, character doesn't enter, no figure in the mirror, unseen room stays unseen).
 
-**Before you spend a render:** re-read the shot against the ★ items especially. If any star is blank, the clip will likely come back wrong and waste credits — fix it first.
+**Before you spend a render:** re-read the shot against the ★ items especially. If any star is blank, the clip will likely come back wrong and waste credits — fix it first. For precision- or risk-critical shots, set **Keyframe preview** (`start` or `start+end`) so the opening (and/or closing) frame is locked as a cheap still and approved before the paid video render.
 
 ## Writing Principles
 
