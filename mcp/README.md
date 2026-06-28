@@ -23,6 +23,7 @@ MCP servers for Claude Code are typically configured in one of these locations:
 
 ## Links
 
+- Glama [here](https://glama.ai/)
 - MCP Sever Directory [here](https://mcpservers.org/)
 - Chrome DevToops MCP [here](https://github.com/ChromeDevTools/chrome-devtools-mcp)
 - Playwright MCP [here](https://github.com/microsoft/playwright-mcp)
