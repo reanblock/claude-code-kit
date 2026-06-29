@@ -6,6 +6,7 @@
 |---------|-------------|---------|
 | [Commands](./commands/README.md) | Custom slash commands invoked with `/` | Manual triggers for templates, audits, etc. |
 | [Skills](./skills/README.md) | Markdown instruction files for specific tasks | Automatic behaviors inferred from conversation |
+| [Plugins](./plugins/README.md) | Bundles of components installed from a marketplace | Commands, skills, agents & hooks packaged together |
 | [MCP](./mcp/README.md) | Model Context Protocol integrations | External tools, services, and APIs |
 | [Hooks](./hooks/README.md) | Shell commands triggered at lifecycle events | Pre/post tool use, session events, validators |
 | [Agents](./agents/README.md) | CC Agent Teams Feature | Details of running Agent Teams in Tmux sessions |
