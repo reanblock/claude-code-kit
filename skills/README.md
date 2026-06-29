@@ -28,6 +28,8 @@ You can also create your own custom skills using `npx sills`. For details run `n
 
 - Security Audit Report Severity Reviewer Skill [here](./audit-severity-review/SKILL.md)
 - Explain Code Skill [here](./explain-code/SKILL.md) (taken from docs [here](https://code.claude.com/docs/en/skills))
+- [Systematic Debugging](https://www.skills.sh/obra/superpowers/systematic-debugging)
+
 
 ## Links
 
