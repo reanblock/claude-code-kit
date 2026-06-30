@@ -70,6 +70,22 @@ else
 fi
 echo ""
 
+# Step 4: Copy global CLAUDE.md
+echo -e "${YELLOW}Step 4: Installing CLAUDE.md...${NC}"
+CLAUDE_MD_SOURCE="$SCRIPT_DIR/global-CLAUDE.md"
+CLAUDE_MD_TARGET="$CLAUDE_DIR/CLAUDE.md"
+if [ -f "$CLAUDE_MD_SOURCE" ]; then
+    if [ -f "$CLAUDE_MD_TARGET" ]; then
+        echo "  - Backing up existing CLAUDE.md to CLAUDE.md.bak"
+        cp "$CLAUDE_MD_TARGET" "$CLAUDE_MD_TARGET.bak"
+    fi
+    echo "  - Copying global-CLAUDE.md to $CLAUDE_MD_TARGET"
+    cp "$CLAUDE_MD_SOURCE" "$CLAUDE_MD_TARGET"
+else
+    echo -e "  - ${RED}Warning: $CLAUDE_MD_SOURCE not found, skipping${NC}"
+fi
+echo ""
+
 echo -e "${GREEN}Installation complete!${NC}"
 echo ""
 echo "The following have been installed to ~/.claude:"
@@ -80,6 +96,9 @@ for dir in "${DIRS[@]}"; do
 done
 if [ -f "$SETTINGS_SOURCE" ]; then
     echo "  ✓ settings.json"
+fi
+if [ -f "$CLAUDE_MD_SOURCE" ]; then
+    echo "  ✓ CLAUDE.md"
 fi
 echo ""
 echo -e "${YELLOW}Note: You may need to restart Claude Code for changes to take effect.${NC}"
