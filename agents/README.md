@@ -1,6 +1,24 @@
 ## Agent Teams
 
-### Steps
+## UPDATE
+
+Just use a prompt that includes:
+
+- "Create an Agent Team to..."
+- "Team members: frontend engineer to work on the frontend, a backend engineer to ... etc, etc"
+- "Include an integration tester that builds and runs playwrite tests reporting issues to be fixed back to the team members...."
+- "A Database engineer ...."
+- "A DevOps engineer ...."
+- "An LLM engineer ...."
+- etc, etc add other things you want in the team + rules on how they should communicate and collaborate.
+
+**Example**
+
+*"Create an Agent Team to complete the project as defined. Team members: a Frontend Engineer to build the frontend, a Backend API engineer to work on the APIs and backend, a Database engineer for all database related code, an LLM engineer on the LLM calls. While all engineers should work on unit tests there should also be an integration tester that builds and runs playwrite tests reporting issues to be fixed back to the team members. Finally, a DevOps engineer for the Docker container and scripts."*
+
+### (Optional - More comples) Steps 
+
+Use the `/plan_w_team` and `/build-with-agent-team` skills especially for more complex projects that do not yet have a plan and you want claude to write the plan specifically for Agent Teams.
 
 **Greenfield Project (brand new)**
 
