@@ -22,6 +22,10 @@ Details [here](https://opengsd.net/) and GSD repo [here](https://github.com/open
 
 This is an opinionated approach to Agent Teams - using spec driven develiopment.
 
+### Gastown
+
+Another agent orchestrator: [gastown](https://github.com/gastownhall/gastown).
+
 ### (Optional - More comples) Steps 
 
 Use the `/plan_w_team` and `/build-with-agent-team` skills especially for more complex projects that do not yet have a plan and you want claude to write the plan specifically for Agent Teams.
