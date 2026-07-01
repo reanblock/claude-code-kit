@@ -24,7 +24,104 @@ This is an opinionated approach to Agent Teams - using spec driven develiopment.
 
 ### Gastown
 
-Another agent orchestrator: [gastown](https://github.com/gastownhall/gastown).
+[Gastown](https://github.com/gastownhall/gastown) is a multi-agent orchestration system (Mayor, Deacon, Witness, Refinery, polecats/crew) built around "rigs" (repos) and "beads" (tasks). This is the full setup we used, kept here for reference.
+
+### Full setup — install → rig → crew → Mayor
+
+**1. Install the `gt` CLI (npm)**
+
+```bash
+npm install -g @gastown/gt
+```
+
+> ⚠️ If the environment has `npm config get ignore-scripts` = `true`, npm skips `gt`'s postinstall that downloads the native binary. Run it manually:
+>
+> ```bash
+> node "$(npm root -g)/@gastown/gt/scripts/postinstall.js"
+> ```
+
+Verify: `gt --help`
+
+**2. Install `bd` (beads)**
+
+- Download `beads_<ver>_linux_amd64.tar.gz` from [gastownhall/beads releases](https://github.com/gastownhall/beads/releases) → extract → `install -m 0755 bd ~/.local/bin/bd`
+- Verify: `bd version`
+
+**3. Install `dolt` — prebuilt, no Go needed**
+
+- Download `dolt-linux-amd64.tar.gz` from [dolthub/dolt releases](https://github.com/dolthub/dolt/releases) → extract → `install -m 0755 dolt ~/.local/bin/dolt`
+- Verify: `dolt version`
+
+> ⚠️ `bd` and `dolt` must be on `PATH` — `~/.local/bin` is.
+
+**4. Create the Gas Town workspace**
+
+```bash
+gt install ~/gt --git   # do this after steps 2–3 so Dolt setup isn't skipped
+cd ~/gt
+```
+
+**5. Bring up global state + services**
+
+```bash
+gt enable   # initialize global state
+gt up       # starts Dolt server (:3307), daemon, Mayor, Deacon
+gt status   # verify
+```
+
+> 🔧 **Repair steps we actually needed** (only because deps came late — skip on a clean install):
+> - `gt dolt init` — migrate/repair the half-configured town DB into `.dolt-data/`
+> - Stop any stale beads-managed Dolt server holding a lock, then `gt dolt start`
+> - `gt doctor --fix` — reconcile config
+
+**6. Add the rig**
+
+```bash
+gt rig add finally https://github.com/reanblock/finally
+```
+
+**7. Create & start your crew workspace**
+
+```bash
+gt crew add <name> --rig finally   # create the workspace (e.g. dave)
+gt crew start <name>               # start its session (creates workspace if needed)
+gt crew at <name>                  # attach to the crew session
+# cd ~/gt/finally/crew/<name>      # to work in the files directly
+```
+
+**8. Attach the Mayor**
+
+```bash
+gt mayor status    # check it's running (it was started by gt up)
+gt mayor start     # only if not already running
+gt mayor attach    # attach to the Mayor session
+```
+
+> Use `Ctrl-b w` to list all open tmux sessions and navigate through them.
+
+### Work on a gastown agentic project
+
+**1. Attach and give the Mayor a goal** (high-level, not step-by-step):
+
+```bash
+gt mayor attach
+```
+
+Then type something like:
+
+> "In the finally rig, start building the FinAlly trading workstation per `planning/PLAN.md`. Begin with the FastAPI backend — the portfolio and watchlist API endpoints and the SQLite schema. File beads for the work and dispatch it to the rig."
+
+The Mayor will create beads (tasks) and route them to `finally`. You don't manage the polecats yourself — the Witness/Refinery handle spawning and merging.
+
+**2. Detach when you want to step away** (the Mayor keeps running): `Ctrl-b` then `d`.
+
+**3. Monitor progress from your normal shell** (`~/gt`):
+
+- `gt status` — all agents at a glance
+- `gt agents` — the real agent roster
+- `gt peek <agent>` — recent output from a polecat/crew/agent session
+- `bd list` (inside a rig dir) — the task/bead queue and status
+- `gt costs` — Claude usage for running sessions
 
 ### (Optional - More comples) Steps 
 
