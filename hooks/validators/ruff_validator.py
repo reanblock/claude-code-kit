@@ -18,15 +18,20 @@ import subprocess
 import sys
 from pathlib import Path
 
-# Logging setup - log file next to this script
-SCRIPT_DIR = Path(__file__).parent
-LOG_FILE = SCRIPT_DIR / "ruff_validator.log"
+# Logging setup - log to repo ./logs like the other hooks; degrade gracefully.
+LOG_DIR = Path.cwd() / "logs"
+_handlers = []
+try:
+    LOG_DIR.mkdir(parents=True, exist_ok=True)
+    _handlers.append(logging.FileHandler(LOG_DIR / "ruff_validator.log", mode='a'))
+except OSError:
+    pass  # read-only filesystem (e.g. container) — run without a log file
 
 logging.basicConfig(
     level=logging.INFO,
     format="%(asctime)s | %(levelname)s | %(message)s",
     datefmt="%Y-%m-%d %H:%M:%S",
-    handlers=[logging.FileHandler(LOG_FILE, mode='a')]
+    handlers=_handlers,
 )
 logger = logging.getLogger(__name__)
 
