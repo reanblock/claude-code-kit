@@ -259,7 +259,7 @@ Assign explicitly before spawning:
 
 Enter **Delegate Mode** (Shift+Tab) before spawning agents. You are the coordinator — do NOT implement code yourself.
 
-Use the spawn prompt structure from `build-with-agent-team`:
+Use the spawn prompt structure from `build-with-team`:
 - Include ownership boundaries
 - Include the full contracts (API shapes, data models)
 - Include cross-cutting concern assignments

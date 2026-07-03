@@ -5,7 +5,7 @@ A Claude Code skill for building projects using [Agent Teams](https://www.anthro
 Once set up, it's as simple as:
 
 ```bash
-/build-with-agent-team [plan-path] [num-agents]
+/build-with-team [plan-path] [num-agents]
 ```
 
 ## Prerequisites
@@ -72,12 +72,12 @@ export CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=1
 Copy the skill to your personal skills directory:
 
 ```bash
-cp -r build-with-agent-team ~/.claude/skills/
+cp -r build-with-team ~/.claude/skills/
 ```
 
 Or for project-level use:
 ```bash
-cp -r build-with-agent-team .claude/skills/
+cp -r build-with-team .claude/skills/
 ```
 
 ## Create Your Plan
@@ -101,7 +101,7 @@ See `example-plan/session-manager-plan.md` for an example.
 ## Usage
 
 ```bash
-/build-with-agent-team [plan-path] [num-agents]
+/build-with-team [plan-path] [num-agents]
 ```
 
 **Parameters:**
@@ -115,13 +115,13 @@ See `example-plan/session-manager-plan.md` for an example.
 
 ```bash
 # Let the skill determine team size
-/build-with-agent-team ./plans/my-project.md
+/build-with-team ./plans/my-project.md
 
 # Specify 3 agents
-/build-with-agent-team ./plans/my-project.md 3
+/build-with-team ./plans/my-project.md 3
 
 # Build a feature in existing codebase
-/build-with-agent-team ./docs/new-auth-feature.md 2
+/build-with-team ./docs/new-auth-feature.md 2
 ```
 
 The skill will:

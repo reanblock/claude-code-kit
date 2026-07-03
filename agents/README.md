@@ -1,6 +1,6 @@
 ## Agent Teams
 
-## UPDATE
+## Claude Agents (Vanilla Prompt)
 
 Just use a prompt that includes:
 
@@ -16,17 +16,55 @@ Just use a prompt that includes:
 
 *"Create an Agent Team to complete the project as defined. Team members: a Frontend Engineer to build the frontend, a Backend API engineer to work on the APIs and backend, a Database engineer for all database related code, an LLM engineer on the LLM calls. While all engineers should work on unit tests there should also be an integration tester that builds and runs playwrite tests reporting issues to be fixed back to the team members. Finally, a DevOps engineer for the Docker container and scripts."*
 
-### GSD - Get "Ship" Done!
+## Claude Agents (Using the `/plan_with_team` command and `/build-with-team` skill)
+
+Use the `/plan_with_team` command and `/build-with-team` skill especially for more complex projects that do not yet have a plan and you want claude to write the plan specifically for Agent Teams.
+
+**NOTE**: Currently an experimental feature - you need to add the following to your projects `.claude/settings.json` file:
+
+```json
+{
+  "env": {
+    "CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS": "1"
+  }
+}
+```
+
+**Greenfield Project (brand new)**
+
+1. Create new project directory `my-new-project` and cd into it then run `git init`.
+1. Run `tmux` (install guide below).
+1. Run `claude`.
+1. Create a detailed spec file - perhaps using Claude and save it somewhere in your project.
+1. Run `/plan_with_team` with your project spec prompt and team orchestration prompt (using the prompt example below).
+1. Review `specs/<plan>.md` — tweak if needed.
+1. Run `/build-with-team` skill for example `/build-with-team specs/<plan>.md`.
+
+**Brownfield Project (adding new feature)**
+
+1. Run `/explore` skill to get a summary of the project. 
+2. Run `tmux` (install guide below).
+3. Run `claude`.
+1. Create a detailed spec file - perhaps using Claude and save it somewhere in your project.
+4. Run `/plan_with_team` with your project spec prompt and team orchestration prompt.
+5. Review `specs/<plan>.md` — tweak if needed.
+6. Run `/build-with-team` skill for example `/build-with-agent-team specs/a-spec-file.md`.
+
+When you run this prompt, you should see something amazing like:
+
+![Multi-Agent Teams](../images/multi-agent-teams.png)
+
+## GSD - Get "Ship" Done!
 
 Details [here](https://opengsd.net/) and GSD repo [here](https://github.com/open-gsd/gsd-core).
 
 This is an opinionated approach to Agent Teams - using spec driven develiopment.
 
-### Gastown
+## Gastown
 
 [Gastown](https://github.com/gastownhall/gastown) is a multi-agent orchestration system (Mayor, Deacon, Witness, Refinery, polecats/crew) built around "rigs" (repos) and "beads" (tasks). This is the full setup we used, kept here for reference.
 
-### Full setup — install → rig → crew → Mayor
+### Gastown Full setup — install → rig → crew → Mayor
 
 **1. Install the `gt` CLI (npm)**
 
@@ -123,56 +161,7 @@ The Mayor will create beads (tasks) and route them to `finally`. You don't manag
 - `bd list` (inside a rig dir) — the task/bead queue and status
 - `gt costs` — Claude usage for running sessions
 
-### (Optional - More comples) Steps 
 
-Use the `/plan_w_team` and `/build-with-agent-team` skills especially for more complex projects that do not yet have a plan and you want claude to write the plan specifically for Agent Teams.
-
-**Greenfield Project (brand new)**
-
-1. Create new project directory `my-new-project` and cd into it then run `git init`.
-2. Run `tmux` (install guide below).
-3. Run `claude`.
-4. Run `/plan_w_team` with your project spec prompt and team orchestration prompt (using the prompt example below).
-5. Review `specs/<plan>.md` — tweak if needed.
-6. Run `/build-with-agent-team` skill for example `/build-with-agent-team specs/<plan>.md`.
-
-**Brownfield Project (adding new feature)**
-
-1. Run `/explore` skill to get a summary of the project. 
-2. Run `tmux` (install guide below).
-3. Run `claude`.
-4. Run `/plan` or `/plan_w_team` with your project spec prompt and team orchestration prompt.
-5. Review `specs/<plan>.md` — tweak if needed.
-6. Run `/build` or `/build-with-agent-team` skill for example `/build-with-agent-team specs/<plan>.md`.
-
-**Example /plan_w_team user and orchestration promopt**
-
-```bash
-/plan_w_team "Build a simple calorie tracker web app. Users should be able to:
-- Add food entries with a name and calorie count
-- View a daily log of all entries
-- See a running total for the day
-- Delete entries
-- Reset/clear the day
-
-Use plain HTML, CSS, and vanilla JavaScript with a JSON file as the data store. No frameworks, no build tools. Keep it simple and self-contained." 
-
-"Use two builder agents running in parallel: one focused on the data layer (storage, read/write operations, daily totals logic) and one focused on the UI (HTML structure, CSS styling, user interactions). The data builder should use Opus. The UI builder should use Sonnet. Both builders work simultaneously. Once both are complete, use the tester agent to write and run tests covering happy paths, edge cases, and failure scenarios. Keep at least one builder agent available to fix things should any tests fail. Finally, use the validator agent to wire everything together and verify the app meets all acceptance criteria end-to-end."
-```
-
-When you run this prompt, you should see something amazing like:
-
-![Multi-Agent Teams](../images/multi-agent-teams.png)
-
-NOTE: Currently an experimental feature - you need to add the following to your `settings.json`:
-
-```json
-{
-  "env": {
-    "CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS": "1"
-  }
-}
-```
 
 ### Tmux
 
@@ -189,7 +178,7 @@ claude --dangerously-skip-permissions
 
 ![Tmux Cheat Sheet](../images/tmux-cheat-sheet.png)
 
-### Orchestration using the Multi-Agent Observability Application
+### [OPTIONAL] Orchestration using the Multi-Agent Observability Application
 
 1. Clone the `claude-code-hooks-multi-agent-observability` repo [here](https://github.com/disler/claude-code-hooks-multi-agent-observability)
 2. Follow the Integration steps [here](https://github.com/disler/claude-code-hooks-multi-agent-observability?tab=readme-ov-file#-integration)

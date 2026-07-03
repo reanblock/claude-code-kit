@@ -43,7 +43,7 @@ The top-level directories each map to a Claude Code extension mechanism. Key dis
 ### The plan → build workflow
 
 The commands and team agents form a pipeline documented in `agents/README.md`:
-`/explore` (understand a codebase) → `/plan` or `/plan_w_team` (writes a spec to `specs/`) → `/build` or the `build-with-agent-team` skill (executes the spec, optionally with parallel builder/tester/validator agents in tmux). Agent Teams require `CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=1` (set in `settings.json` `env`) and `teammateMode: tmux`.
+`/explore` (understand a codebase) → `/plan` or `/plan_with_team` (writes a spec to `specs/`) → `/build` or the `build-with-team` skill (executes the spec, optionally with parallel builder/tester/validator agents in tmux). Agent Teams require `CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=1` (set in `settings.json` `env`) and `teammateMode: tmux`.
 
 ## Hooks architecture
 
