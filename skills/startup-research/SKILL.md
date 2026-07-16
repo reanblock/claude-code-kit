@@ -1,6 +1,9 @@
 ---
 name: startup-research
 description: "Perform comprehensive research for a startup idea and produce a detailed markdown report. Use this skill whenever the user describes a startup idea, business concept, app idea, SaaS product, or entrepreneurial venture they want to evaluate. Triggers include: phrases like 'startup idea', 'business idea', 'I want to build', 'is this a good idea', 'research this concept', 'validate my idea', 'market research for', 'feasibility study', or any description of a product/service the user is considering building as a business. Also triggers when the user asks about target markets, competitive landscapes, go-to-market strategy, or MVP planning for a new venture. Do NOT use for researching existing public companies, stock analysis, or general business questions unrelated to evaluating a new startup concept."
+model: sonnet
+effort: low
+disallowed-tools: [Agent]
 ---
 
 # Startup Research Skill

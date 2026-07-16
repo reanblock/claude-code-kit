@@ -1,11 +1,35 @@
 ---
 name: audit-verify-fixes
-description: Verify whether client code changes actually resolve issues identified in a smart contract security audit report. Use when users request "verify fixes", "check remediations", "validate fixes", or want to confirm that audit findings have been properly addressed by reviewing git history and commit diffs.
+description: Verify whether client code changes actually resolve issues identified in a smart contract security audit. Findings may come from an audit report file (PDF/markdown) or from a GitHub repository where each finding is an issue. Use when users request "verify fixes", "check remediations", "validate fixes", "check if issues are fixed", or pass a GitHub repo URL and ask to verify the fixes for its findings/issues.
 ---
 
 # Audit Fix Verification
 
-You are an expert smart contract security researcher. Your task is to take a security audit report and verify whether the client's code changes (identified by commit SHAs or update references) actually resolve each issue described in the report.
+You are an expert smart contract security researcher. Your task is to take a set of security audit findings and verify whether the client's code changes (identified by commit SHAs or update references) actually resolve each issue described.
+
+Findings arrive in one of two forms — an **audit report file**, or a **GitHub repository whose issues are the findings**. The workflow below branches only on how findings and fix commits are located; the verification, classification, and reporting logic is identical for both.
+
+## ⛔ Read-Only Constraint — Non-Negotiable
+
+**This skill is strictly read-only with respect to any remote repository. The repository under review is shared with the client.**
+
+DO NOT MAKE ANY CHANGES OR POST ANY COMMENTS OR UPDATES TO THE GITHUB REPO SINCE THIS IS SHARED WITH THE CLIENT.
+
+Concretely, you must **never** run any command that writes to the remote or its issues:
+
+- ❌ `gh issue comment`, `gh issue close`, `gh issue reopen`, `gh issue edit`, `gh issue create`
+- ❌ `gh pr create`, `gh pr comment`, `gh pr review`, `gh pr merge`
+- ❌ `gh api` with `-X POST`, `-X PATCH`, `-X PUT`, or `-X DELETE`
+- ❌ `git push`, `git commit`, `git tag`, or anything that mutates the shared branch
+- ❌ Editing any file in the repository under review
+
+The **only** permitted `gh` and `git` operations are read-only:
+
+- ✅ `gh issue list`, `gh issue view` (including `--comments`)
+- ✅ `gh api` GET requests (the default method)
+- ✅ `git fetch`, `git log`, `git show`, `git diff`, `git branch`, `git checkout` (local inspection only)
+
+Produce the verification report as terminal output (and a local file only if the user explicitly asks). Any finding that appears to require a comment or update on the client's repo is reported to the **user**, who decides what to communicate. If you believe a write operation is genuinely necessary, stop and ask the user first — never assume permission.
 
 ## Trigger Conditions
 
@@ -17,11 +41,24 @@ Use this skill when the user requests:
 - "review client updates"
 - "verify audit remediation"
 
-AND a security audit report is available.
+AND a finding source is available — either a security audit report, or a GitHub repository whose issues are the findings.
 
 ## Processing Workflow
 
-### 1. Locate the Audit Report
+### 1. Determine the Finding Source
+
+Before anything else, establish which mode applies:
+
+| Signal | Mode |
+|---|---|
+| The argument is a GitHub repository URL (`https://github.com/<org>/<repo>`), or the user refers to findings as issues in a repo | **Mode B — GitHub Issues** |
+| The argument is a file path, or a report file is named in conversation / found in the workspace | **Mode A — Audit Report** |
+
+If both are present, ask the user which to use. If neither can be determined, ask — do not guess.
+
+---
+
+### 1A. Mode A — Locate the Audit Report
 
 The audit report file must be resolved before any analysis begins. Use this priority order:
 
@@ -34,7 +71,44 @@ The audit report file must be resolved before any analysis begins. Use this prio
    Look for files with names containing keywords like `audit`, `report`, `findings`, `security`, or `review`. If exactly one strong candidate is found, use it. If multiple candidates exist, present the list and ask the user to choose.
 4. **Ask the user**: If no candidates are found, ask the user to provide the file path. Do not guess or proceed without a report.
 
-### 2. Extract Report Findings
+---
+
+### 1B. Mode B — Locate the GitHub Findings Repository
+
+Used when the client tracks findings as GitHub issues. In this arrangement:
+
+- Each **finding is an issue** in the repository.
+- Each issue carries a **client comment** explaining how they fixed it, including a **commit SHA**.
+- The **code lives in the same repository**, on the **`fixes-review` branch** — that is where the referenced SHAs are found.
+
+**Step A — Resolve the repository.** Take the GitHub URL from the skill argument or the conversation. Confirm access before proceeding:
+
+```bash
+gh repo view <org>/<repo> --json name,defaultBranchRef
+```
+
+**Step B — Obtain the code locally.** If the current working directory is not already a clone of that repo, clone it (to a scratch location, not into the user's project):
+
+```bash
+git clone <repo_url> <scratch_dir>
+```
+
+**Step C — Fetch the review branch.** All fix commits are expected on `fixes-review`:
+
+```bash
+git fetch origin fixes-review
+git log --oneline origin/fixes-review | head -20
+```
+
+If the `fixes-review` branch does not exist, stop and ask the user for the correct branch name rather than falling back to the default branch — verifying against the wrong branch produces confidently wrong results.
+
+Re-read the read-only constraint above before running any `gh` command in this mode.
+
+---
+
+### 2. Extract Findings
+
+#### 2A. Mode A — Extract Report Findings
 
 Read and parse the located audit report. Extract each finding with:
 - Finding ID/identifier
@@ -44,15 +118,65 @@ Read and parse the located audit report. Extract each finding with:
 - Affected code locations (contracts, functions, line numbers)
 - The specific fix recommendation (if provided)
 - **Client commit SHA or update reference** (if present)
+- **Client fix explanation** (if present) — the client's own description of how they addressed the finding
 
 For PDF reports:
 ```bash
 pip install pypdf --break-system-packages 2>/dev/null
 ```
 
+#### 2B. Mode B — Extract Findings from GitHub Issues
+
+**Step A — Enumerate the findings.** Include closed issues; a client may have closed an issue they consider fixed, and that claim is exactly what needs verifying:
+
+```bash
+gh issue list --repo <org>/<repo> --state all --limit 200 \
+  --json number,title,labels,state,body
+```
+
+**Step B — Read each issue with its comments** to obtain the client's fix explanation and commit SHA:
+
+```bash
+gh issue view <issue_number> --repo <org>/<repo> --comments \
+  --json number,title,labels,state,body,comments
+```
+
+**Step C — Extract per finding:**
+
+- **Finding ID** — prefer an explicit identifier in the issue title (e.g. `FIND-01`); otherwise use the issue number (`#42`).
+- **Title**, **description**, **affected code locations**, **fix recommendation** — from the issue body.
+- **Severity** — search in this order, stopping at the first hit: issue **labels**, then a prefix/tag in the **title**, then the **body**. If severity cannot be determined for a finding, do not guess — ask the user.
+- **Client fix explanation** — the client's comment describing how they addressed it.
+- **Commit SHA** — extracted from that comment. A comment may reference multiple commits; capture all of them.
+
+##### Severity Scale (Mode B)
+
+This mode uses a four-level scale. **Use these terms verbatim in the output** — do not translate them into the Critical/High/Medium/Low/Informational scale used by Mode A. Mapping is lossy ("Major" spans High and Medium; "Minor" is closer to Low) and would misreport the client's own severities back to them.
+
+| Severity | Definition |
+|---|---|
+| **Critical** | A serious and exploitable vulnerability that can lead to loss of funds, unrecoverable locked funds, or catastrophic denial of service. |
+| **Major** | A vulnerability or bug that can affect the correct functioning of the system, lead to incorrect states or denial of service. |
+| **Minor** | A violation of common best practices or incorrect usage of primitives, which may not currently have a major impact on security, but may do so in the future or introduce inefficiencies. |
+| **Informational** | Comments and recommendations of design decisions or potential optimizations, that are not relevant to security. Their application may improve aspects such as user experience or readability, but is not strictly necessary. This category may also include opinionated recommendations that the project team might not share. |
+
+**Note on Informational findings:** The definition above explicitly includes opinionated recommendations the project team may not share. A "Not Fixed" on an Informational finding is therefore often a legitimate, deliberate decline rather than a failure to act. Where the client's comment indicates a considered decision not to apply the recommendation, say so in the explanation rather than presenting it as an outstanding issue.
+
 ### 3. Analyze Git History for Each Finding
 
 For each finding that has an associated commit SHA or update reference:
+
+**Mode B — resolve every SHA against `fixes-review` first.** The commit must be reachable from that branch; a SHA that exists elsewhere (or not at all) has not landed in the code under review:
+
+```bash
+# Confirm the SHA exists and is reachable from the review branch
+git merge-base --is-ancestor <commit_sha> origin/fixes-review && echo "on fixes-review"
+
+# If the above fails, check whether the commit exists at all
+git cat-file -t <commit_sha> 2>/dev/null
+```
+
+If a referenced SHA cannot be found, or exists but is not reachable from `fixes-review`, mark the finding **Unresolved** and state which of the two it was. Do not silently fall back to searching other branches.
 
 **Step A — Retrieve the diff for the commit:**
 ```bash
@@ -125,6 +249,21 @@ For each finding, determine the fix status by evaluating:
    - If the report suggests a specific fix, does the implementation match?
    - If a different approach was taken, is it equally effective?
 
+5. **Does the client's explanation match the diff?**
+
+   Both modes supply the client's own account of the fix — in Mode A from the report, in Mode B from the issue comment. Read it for context, but **verify against the diff, not the claim**. The stated fix is an assertion to be tested, not evidence.
+
+   Compare what the client says they did against what the diff actually does, and resolve as follows:
+
+   | Claim vs. diff | Root cause addressed? | Outcome |
+   |---|---|---|
+   | Match | Yes | **Fixed** — normal case |
+   | Mismatch (wording is loose or inaccurate, but the code genuinely fixes it) | Yes | **Fixed** — note the discrepancy in the explanation; do not penalise imprecise wording |
+   | Mismatch (the claim describes protection the diff does not contain) | No | **Not Fixed** or **Mitigated** as the diff warrants — state the discrepancy explicitly |
+   | Claim describes work beyond the diff (e.g. "also added tests" with no tests present) | Yes | **Fixed** — note the unsubstantiated part of the claim |
+
+   The status is always determined by the code, never by the claim. A discrepancy is reported because it is useful signal for the reviewer, and because a claim more thorough than the shipped diff often indicates the client believes they are more protected than they are — but it never by itself downgrades a fix that genuinely works.
+
 ### 5. Status Classification
 
 Assign one of the following statuses to each finding:
@@ -134,7 +273,7 @@ Assign one of the following statuses to each finding:
 | **Fixed** | The code change fully resolves the described vulnerability. The root cause is addressed and the fix is complete. |
 | **Mitigated** | The code change reduces the risk but does not fully eliminate the vulnerability. The fix may be partial, address only some attack vectors, or use an alternative approach that reduces but doesn't eliminate exposure. |
 | **Not Fixed** | A commit/update was referenced but the code changes do not resolve the issue. The vulnerability remains exploitable as described. |
-| **Unresolved** | No commit SHA or code change was provided for this finding, or the referenced commit could not be found in the repository. The issue has not been addressed. |
+| **Unresolved** | No commit SHA or code change was provided for this finding, or the referenced commit could not be found in the repository. The issue has not been addressed. In Mode B this also covers: the issue has no client fix comment, the comment references no commit SHA, or the referenced SHA is not reachable from `fixes-review`. |
 
 ### 6. Output Format
 
@@ -178,7 +317,9 @@ If any commits were flagged with "Yes" in the Extra Changes column, output a sec
 
 **Output Requirements:**
 - Use ASCII box-drawing characters for terminal display
-- Sort by severity (Critical → High → Medium → Low → Informational)
+- Sort by severity, using the scale that matches the mode:
+  - **Mode A** (audit report): Critical → High → Medium → Low → Informational
+  - **Mode B** (GitHub issues): Critical → Major → Minor → Informational — print labels verbatim; do not translate them to the Mode A scale
 - Within the same severity, sort by status (Not Fixed → Unresolved → Mitigated → Fixed)
 - Keep explanations concise but specific — reference the actual code changes observed
 - Include the summary line with counts for each status
@@ -203,15 +344,21 @@ After the summary table, offer to provide detailed analysis for any specific fin
 - **Removed code**: If the vulnerable code was entirely removed/replaced, verify the functionality is either no longer needed or implemented safely elsewhere
 - **Configuration changes**: Some fixes may be parameter changes (e.g., updating a threshold) rather than code changes; validate these against the finding's requirements
 - **Missing commit SHAs**: If the report references updates but no specific commits, use file-level git history and date ranges to identify candidate changes
+- **Mode B — closed issues**: An issue being closed is a claim, not evidence. Verify the diff regardless of issue state, and flag any issue closed without a corresponding code change
+- **Mode B — multiple SHAs in one comment**: Treat the full set as the fix; analyze each and assess the combined effect
+- **No client explanation**: The claim/diff comparison is skipped, not failed. Verify the diff on its own merits and assign status normally
 
 ## Quality Checks
 
 Before presenting results:
+- **No write operation was performed against the client's repository** — no comments, no issue edits, no pushes
 - All findings from the report have been accounted for
 - Each status assignment has a clear, evidence-based justification
 - Git diffs were actually reviewed (not just commit messages)
 - The explanation references specific code changes, not generic statements
 - No finding is marked "Fixed" without verifying the root cause is addressed
+- Where the client provided an explanation, it was compared against the diff, and any discrepancy is noted in the finding's explanation
+- No finding was downgraded solely because the client's wording was imprecise — status follows the code, not the claim
 - Every fix commit was checked for unrelated changes (the full `--stat` was reviewed, not just the affected files)
 - Unrelated changes are described with enough specificity (file names, function names) to be actionable
 
