@@ -48,6 +48,11 @@ for dir in "${DIRS[@]}"; do
     if [ -d "$source_dir" ]; then
         echo "  - Copying $dir to $target_dir"
         cp -R "$source_dir" "$CLAUDE_DIR/"
+        # The skills folder's top-level README.md is repo documentation, not a skill
+        if [ "$dir" = "skills" ] && [ -f "$target_dir/README.md" ]; then
+            echo "  - Skipping $dir/README.md (repo docs only)"
+            rm -f "$target_dir/README.md"
+        fi
     else
         echo -e "  - ${RED}Warning: $source_dir not found, skipping${NC}"
     fi
