@@ -1,7 +1,7 @@
 ---
 name: audit-prototype
 description: Build a mocked interactive prototype UI from smart contracts to help security researchers understand a protocol. Analyzes contracts, extracts interfaces/admin functions/state, and builds a lightweight frontend with SQLite persistence, real-time price feeds, simulated trading, admin levers, and annotated visualizations. Uses agent teams for parallel builds. Does NOT connect to any blockchain, wallet, or local node. Use when users request "audit prototype", "prototype the contracts", "build a mock UI", "mock frontend", "contract explorer", "protocol prototype", or want to visually explore a smart contract system.
-argument-hint: [contracts-path-or-glob] [output-dir]
+argument-hint: "[contracts-path-or-glob] [output-dir]"
 ---
 
 # Audit Prototype Builder

@@ -44,6 +44,14 @@ cat << 'EOF' > ~/.pi/agent/models.json
 EOF
 ```
 
+Add a skills alias to `~/.pi/agent/settings.json` file so that PI agent detects all available Claude skills.
+
+```json
+"skills": [
+  "~/.claude/skills"
+]
+```
+
 Simply run `pi` in the terminal like so:
 
 ```bash
