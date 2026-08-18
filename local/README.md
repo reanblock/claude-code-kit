@@ -10,8 +10,11 @@ On the host machine serve the model using [MTPLX](https://mtplx.com/).
 # Install MTPLX via Homebrew
 brew install youssofal/mtplx/mtplx
 
-# Start the MTPLX server and bind it to your Tailscale IP on port 8080
+# Download and serve the model using the MTPLX server and bind it to your Tailscale IP on port 8080
 mtplx serve --download --host TAILSCALE_IP --port 8080 --api-key my-secret-key --model Youssofal/Qwen3.8-27B-Optimized-Speed
+
+# NOTE: if model already downloaded then just run `mtplx serve` like so:
+mtplx serve --host TAILSCALE_IP --port 8080 --api-key my-secret-key
 ```
 
 ## Client Machine
@@ -44,7 +47,7 @@ cat << 'EOF' > ~/.pi/agent/models.json
 EOF
 ```
 
-Add a skills alias to `~/.pi/agent/settings.json` file so that PI agent detects all available Claude skills.
+**OPTIONAL: ** Add a skills alias to `~/.pi/agent/settings.json` file so that PI agent detects all available Claude skills.
 
 ```json
 "skills": [
@@ -55,5 +58,6 @@ Add a skills alias to `~/.pi/agent/settings.json` file so that PI agent detects 
 Simply run `pi` in the terminal like so:
 
 ```bash
+pi --list-models
 pi --model remote-mtplx/qwen3.8-27b-optimized-speed
 ```
