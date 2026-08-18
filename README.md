@@ -39,6 +39,10 @@ Below are some basics such as getting started, installation, CLI reference, diff
 - Use `plan` mode when starting new projects (toggle using tab+shift)
 - Create a CLAUDE.md (and associated) files for context loading. Use `/init` command.
 
+## Running Open Weights Models Locally
+
+[Local LLM Setup](./local/README.md)
+
 ## Links
 
 - [Agency Agents](https://github.com/msitarzewski/agency-agents)
