@@ -7,7 +7,7 @@ description: Perform a security audit of a smart contract codebase — the core,
 
 This skill performs the core work of a security audit: a systematic, in-process review of an in-scope codebase to **discover** vulnerabilities and produce severity-rated findings with explanations, exploit paths, and recommended fixes.
 
-It is the center of the audit lifecycle. Use the related skills for the surrounding phases: `audit-scope` to estimate effort before starting, `audit-prototype` to build a mock UI for understanding the protocol, `audit-vuln-review` to deep-dive a single suspected finding, `audit-severity-review` to reassess severities in an existing report, and `audit-verify-fixes` to confirm remediations afterward. This skill is what runs *between* scoping and fix verification — the audit itself.
+It is the center of the audit lifecycle. Use the related skills for the surrounding phases: `audit-scope` to estimate effort before starting, `audit-prototype` to build a mock UI for understanding the protocol, `audit-vuln-review` to deep-dive a single suspected finding, `audit-severity-review` to reassess severities in an existing report, `audit-false-positive-review` to re-verify an existing report's findings for false positives, and `audit-verify-fixes` to confirm remediations afterward. This skill is what runs *between* scoping and fix verification — the audit itself.
 
 ## Trigger Conditions
 
