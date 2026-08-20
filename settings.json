@@ -34,7 +34,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "uv run ~/.claude/hooks/pre_tool_use.py"
+            "command": "uv run --no-project ~/.claude/hooks/pre_tool_use.py"
           }
         ]
       }
@@ -45,7 +45,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "uv run ~/.claude/hooks/post_tool_use.py"
+            "command": "uv run --no-project ~/.claude/hooks/post_tool_use.py"
           }
         ]
       }
@@ -56,7 +56,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "uv run ~/.claude/hooks/notification.py --notify"
+            "command": "uv run --no-project ~/.claude/hooks/notification.py --notify"
           }
         ]
       }
@@ -67,7 +67,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "uv run ~/.claude/hooks/stop.py --chat"
+            "command": "uv run --no-project ~/.claude/hooks/stop.py --chat"
           }
         ]
       }
@@ -78,7 +78,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "uv run ~/.claude/hooks/subagent_stop.py"
+            "command": "uv run --no-project ~/.claude/hooks/subagent_stop.py"
           }
         ]
       }
@@ -88,7 +88,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "uv run ~/.claude/hooks/user_prompt_submit.py --log-only --store-last-prompt --name-agent"
+            "command": "uv run --no-project ~/.claude/hooks/user_prompt_submit.py --log-only --store-last-prompt --name-agent"
           }
         ]
       }
@@ -99,7 +99,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "uv run ~/.claude/hooks/pre_compact.py"
+            "command": "uv run --no-project ~/.claude/hooks/pre_compact.py"
           }
         ]
       }
@@ -110,7 +110,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "uv run ~/.claude/hooks/session_start.py"
+            "command": "uv run --no-project ~/.claude/hooks/session_start.py"
           }
         ]
       }
@@ -121,7 +121,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "uv run ~/.claude/hooks/session_end.py"
+            "command": "uv run --no-project ~/.claude/hooks/session_end.py"
           }
         ]
       }
@@ -132,7 +132,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "uv run ~/.claude/hooks/permission_request.py --log-only"
+            "command": "uv run --no-project ~/.claude/hooks/permission_request.py --log-only"
           }
         ]
       }
@@ -143,7 +143,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "uv run ~/.claude/hooks/post_tool_use_failure.py"
+            "command": "uv run --no-project ~/.claude/hooks/post_tool_use_failure.py"
           }
         ]
       }
@@ -154,7 +154,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "uv run ~/.claude/hooks/subagent_start.py"
+            "command": "uv run --no-project ~/.claude/hooks/subagent_start.py"
           }
         ]
       }
@@ -165,7 +165,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "uv run ~/.claude/hooks/setup.py"
+            "command": "uv run --no-project ~/.claude/hooks/setup.py"
           }
         ]
       }
