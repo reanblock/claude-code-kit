@@ -12,6 +12,10 @@
 ## JavaScript / TypeScript
 - Prefer `yarn` for package management (`yarn add`, `yarn install`)
 
+## GitHub
+- Never change anything on GitHub unless I explicitly ask you to. This includes creating, editing, commenting on, or closing issues and pull requests, and committing or pushing code.
+- Reading is fine: you may read code, issues, pull requests, and comments.
+
 ## Testing
 - For any code change, add a test that covers the change.
 - If no test framework is set up, ask which one to use before adding tests.
