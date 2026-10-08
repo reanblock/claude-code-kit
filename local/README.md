@@ -10,11 +10,17 @@ On the host machine serve the model using [MTPLX](https://mtplx.com/).
 # Install MTPLX via Homebrew
 brew install youssofal/mtplx/mtplx
 
-# Download and serve the model using the MTPLX server and bind it to your Tailscale IP on port 8080
-mtplx serve --download --host TAILSCALE_IP --port 8080 --api-key my-secret-key --model Youssofal/Qwen3.8-27B-Optimized-Speed
+# Export TAILSCALE_IP 
+export TAILSCALE_IP=$(tailscale ip -4)
+
+# Confirm TAILSCALE_IP is set
+echo $TAILSCALE_IP
+
+# [OPTIONAL] Download and serve the model using the MTPLX server and bind it to your Tailscale IP on port 8080
+mtplx serve --download --host $TAILSCALE_IP --port 8080 --api-key my-secret-key --model Youssofal/Qwen3.8-27B-Optimized-Speed
 
 # NOTE: if model already downloaded then just run `mtplx serve` like so:
-mtplx serve --host TAILSCALE_IP --port 8080 --api-key my-secret-key
+mtplx serve --host $TAILSCALE_IP --port 8080 --api-key my-secret-key
 ```
 
 ## Client Machine
