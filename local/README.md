@@ -6,6 +6,12 @@ This guide explains how to run open weights models locally using two MacBook Pro
 
 On the host machine serve the model using [MTPLX](https://mtplx.com/).
 
+### Hardware
+
+Recommend [Mac Studio M5 MAX 128 GB RAM](https://www.apple.com/shop/buy-mac/mac-studio) running [Qwen3.8-Flash-Next](https://huggingface.co/Youssofal/Qwen3.8-Flash-Next-MTPLX-Bare-Speed) or similar capable model.
+
+Alternatively [search for an AMD box](https://www.minisforum.com/products/ms-s1-max) instead of Mac Studio which might be cheaper.
+
 ### Install mtplx and download model
 
 Run the following commands to install `mtplx` and download model:
