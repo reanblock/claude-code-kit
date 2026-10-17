@@ -6,20 +6,39 @@ This guide explains how to run open weights models locally using two MacBook Pro
 
 On the host machine serve the model using [MTPLX](https://mtplx.com/).
 
+### Install mtplx and download model
+
+Run the following commands to install `mtplx` and download model:
+
 ```bash
 # Install MTPLX via Homebrew
 brew install youssofal/mtplx/mtplx
 
+# List models already downloaded to the local MTPLX cache (add --json for machine-readable output)
+mtplx models
+
+# [OPTIONAL] Download the model into the local MTPLX cache (skip if already listed by `mtplx models`)
+mtplx pull Youssofal/Qwen3.8-27B-Optimized-Speed
+```
+
+### Run model locally
+
+Use the following command to run the model as an interactive chat in the terminal. Use the [serve model](#serve-model) instructions to server over http and connect from a different machine.
+
+```bash
+# Interactive chat in the terminal
+mtplx start cli --model Youssofal/Qwen3.8-27B-MTPLX-Optimized-Speed
+```
+
+#### Serve model
+
+Run the following to serve your model
+
+```bash
 # Export TAILSCALE_IP 
 export TAILSCALE_IP=$(tailscale ip -4)
 
-# Confirm TAILSCALE_IP is set
-echo $TAILSCALE_IP
-
-# [OPTIONAL] Download and serve the model using the MTPLX server and bind it to your Tailscale IP on port 8080
-mtplx serve --download --host $TAILSCALE_IP --port 8080 --api-key my-secret-key --model Youssofal/Qwen3.8-27B-Optimized-Speed
-
-# NOTE: if model already downloaded then just run `mtplx serve` like so:
+# Serve the downloaded model and bind it to your Tailscale IP on port 8080
 mtplx serve --host $TAILSCALE_IP --port 8080 --api-key my-secret-key
 ```
 
