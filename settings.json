@@ -1,7 +1,16 @@
 {
   "sandbox": {
     "enabled": true,
-    "autoAllowBashIfSandboxed": true
+    "autoAllowBashIfSandboxed": true,
+    "filesystem": {
+      "allowWrite": ["~/.cache/uv"]
+    },
+    "excludedCommands": [
+      "cast call *", "cast abi-encode *", "cast abi-decode *", "cast block *",
+      "cast block-number *", "cast balance *", "cast nonce *", "cast receipt *",
+      "cast tx *", "cast logs *", "cast storage *", "cast code *", "cast chain-id *",
+      "gcloud logging read *", "gcloud * list *", "gcloud * describe *"
+    ]
   },
   "enabledPlugins": {
     "rust-analyzer-lsp@claude-plugins-official": true,
