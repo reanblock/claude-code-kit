@@ -1,22 +1,6 @@
 {
-  "sandbox": {
-    "enabled": true,
-    "autoAllowBashIfSandboxed": true,
-    "filesystem": {
-      "allowWrite": ["~/.cache/uv"]
-    },
-    "excludedCommands": [
-      "cast call *", "cast abi-encode *", "cast abi-decode *", "cast block *",
-      "cast block-number *", "cast balance *", "cast nonce *", "cast receipt *",
-      "cast tx *", "cast logs *", "cast storage *", "cast code *", "cast chain-id *",
-      "gcloud logging read *", "gcloud * list *", "gcloud * describe *"
-    ]
-  },
-  "enabledPlugins": {
-    "rust-analyzer-lsp@claude-plugins-official": true,
-    "context7@claude-plugins-official": true,
-    "code-review@claude-plugins-official": true,
-    "weasel@weasel": true
+  "env": {
+    "CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS": "1"
   },
   "permissions": {
     "allow": [],
@@ -26,15 +10,6 @@
       "Bash(git rebase:*)",
       "Bash(git reset:*)"
     ]
-  },
-  "env": {
-    "CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS": "1"
-  },
-  "teammateMode": "tmux",
-  "statusLine": {
-    "type": "command",
-    "command": "uv run ~/.claude/status_lines/status_line_v6.py",
-    "padding": 0
   },
   "hooks": {
     "PreToolUse": [
@@ -122,6 +97,16 @@
             "command": "uv run --no-project ~/.claude/hooks/session_start.py"
           }
         ]
+      },
+      {
+        "matcher": "^(startup|resume|clear|compact|fork)$",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash '/Users/darren/.claude/hooks/herdr-agent-state.sh' session",
+            "timeout": 10
+          }
+        ]
       }
     ],
     "SessionEnd": [
@@ -179,5 +164,30 @@
         ]
       }
     ]
-  }
+  },
+  "statusLine": {
+    "type": "command",
+    "command": "uv run ~/.claude/status_lines/status_line_v6.py",
+    "padding": 0
+  },
+  "enabledPlugins": {
+    "rust-analyzer-lsp@claude-plugins-official": true,
+    "context7@claude-plugins-official": true,
+    "code-review@claude-plugins-official": true,
+    "weasel@weasel": true
+  },
+  "sandbox": {
+    "enabled": true,
+    "autoAllowBashIfSandboxed": true,
+    "filesystem": {
+      "allowWrite": ["~/.cache/uv"]
+    },
+    "excludedCommands": [
+      "cast call *", "cast abi-encode *", "cast abi-decode *", "cast block *",
+      "cast block-number *", "cast balance *", "cast nonce *", "cast receipt *",
+      "cast tx *", "cast logs *", "cast storage *", "cast code *", "cast chain-id *",
+      "gcloud logging read *", "gcloud * list *", "gcloud * describe *"
+    ]
+  },
+  "teammateMode": "tmux"
 }
