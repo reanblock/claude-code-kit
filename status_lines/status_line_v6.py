@@ -8,11 +8,13 @@
 
 """
 Status Line v6 - Context Window Usage
-Display: [Model] # [###---] | 42.5% used | ~115k left | session_id
+Display: folder git:(branch) | [Model] # [###---] | 42.5% used | ~115k left | session_id
 Visual progress indicator with percentage and session ID
 """
 
 import json
+import os
+import subprocess
 import sys
 
 try:
@@ -71,6 +73,43 @@ def format_tokens(tokens):
         return f"{tokens / 1000000:.2f}M"
 
 
+def get_git_branch(cwd):
+    """Return the current git branch (or short SHA if detached), or None."""
+    try:
+        result = subprocess.run(
+            ["git", "-C", cwd, "rev-parse", "--abbrev-ref", "HEAD"],
+            capture_output=True,
+            text=True,
+            timeout=1,
+        )
+        if result.returncode != 0:
+            return None
+        branch = result.stdout.strip()
+        if branch == "HEAD":
+            result = subprocess.run(
+                ["git", "-C", cwd, "rev-parse", "--short", "HEAD"],
+                capture_output=True,
+                text=True,
+                timeout=1,
+            )
+            branch = result.stdout.strip() or None
+        return branch
+    except Exception:
+        return None
+
+
+def format_location(input_data):
+    """Format as `folder git:(branch)`, like the oh-my-zsh robbyrussell prompt."""
+    workspace = input_data.get("workspace", {}) or {}
+    cwd = workspace.get("current_dir") or input_data.get("cwd") or os.getcwd()
+    folder = os.path.basename(os.path.normpath(cwd)) or cwd
+    location = f"{CYAN}{folder}{RESET}"
+    branch = get_git_branch(cwd)
+    if branch:
+        location += f" {BLUE}git:({RED}{branch}{BLUE}){RESET}"
+    return location
+
+
 def generate_status_line(input_data):
     """Generate the context window usage status line."""
     # Get model name
@@ -93,6 +132,9 @@ def generate_status_line(input_data):
 
     # Build status line
     parts = []
+
+    # Current folder and git branch
+    parts.append(format_location(input_data))
 
     # Model name in cyan
     parts.append(f"{CYAN}[{model_name}]{RESET}")
