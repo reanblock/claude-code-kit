@@ -44,6 +44,20 @@ You can also create your own custom skills using `npx sills`. For details run `n
 | [startup-research](./startup-research/SKILL.md) | Researches a startup or product idea and produces a detailed markdown report covering market, competition, go-to-market, and MVP planning. |
 | [story-to-video](./story-to-video/SKILL.md) | Converts narrated prose into a tool-agnostic Markdown shooting script (Asset Bible plus per-scene setting, camera, blocking, dialogue, music, sound) for AI text-to-video generators such as Sora, Runway, Veo, Pika, or Kling. |
 
+## Plugin: mattpocock-skills
+
+[Matt Pocock's skills](https://github.com/mattpocock/skills) are installed as a Claude Code **plugin**, not copied into this repo. They are small, composable engineering skills, including grilling a plan, spec and ticket flows, TDD, diagnosing bugs, code review, domain modelling, PR writing and prototyping. In Claude Code they appear namespaced, e.g. `mattpocock-skills:tdd`.
+
+Install:
+
+```bash
+claude plugins install mattpocock-skills
+```
+
+- Files are stored under `~/.claude/plugins/cache/claude-plugins-official/mattpocock-skills/<version>/`.
+- The plugin is enabled in this repo's `settings.json` (`enabledPlugins`), and `install.sh` keeps the plugin and its settings when it runs.
+- Don't also install these skills with `npx skills add mattpocock/skills`, or you'll have every skill twice.
+
 ## External Examples
 
 - [Systematic Debugging](https://www.skills.sh/obra/superpowers/systematic-debugging)
