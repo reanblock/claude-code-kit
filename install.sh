@@ -14,52 +14,74 @@ echo ""
 
 # Get the directory where the script is located
 SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
-CLAUDE_DIR="$HOME/.claude"
+CLAUDE_DIR="${CLAUDE_DIR:-$HOME/.claude}"
 
-# Define directories to clean and install
+# Directories whose *entries* are synced from this repo. Only the entries that
+# exist in this repo are replaced; anything else in these folders (skills or
+# commands installed separately, synced skills, etc.) is left alone.
 DIRS=("skills" "commands" "hooks" "status_lines" "output-styles" "agents" "prompts")
 
-# Step 1: Remove existing installations
-echo -e "${YELLOW}Step 1: Removing existing installations...${NC}"
-for dir in "${DIRS[@]}"; do
-    target_dir="$CLAUDE_DIR/$dir"
-    if [ -d "$target_dir" ]; then
-        echo "  - Removing $target_dir"
-        rm -rf "$target_dir"
-    else
-        echo "  - $target_dir does not exist, skipping"
-    fi
-done
-echo ""
+# Records which entries this script installed, so entries later removed from
+# the repo can be cleaned up without touching anything else.
+MANIFEST="$CLAUDE_DIR/.claude-code-kit-manifest"
 
-# Step 2: Create .claude directory if it doesn't exist
-if [ ! -d "$CLAUDE_DIR" ]; then
-    echo -e "${YELLOW}Creating $CLAUDE_DIR directory...${NC}"
-    mkdir -p "$CLAUDE_DIR"
+# settings.json keys managed by `claude plugins` that are preserved from the
+# existing settings (merged; the repo's values win on conflict).
+PRESERVED_SETTINGS_KEYS='["enabledPlugins", "extraKnownMarketplaces"]'
+
+mkdir -p "$CLAUDE_DIR"
+
+OLD_MANIFEST=""
+if [ -f "$MANIFEST" ]; then
+    OLD_MANIFEST="$(cat "$MANIFEST")"
 fi
-echo ""
+NEW_MANIFEST=""
 
-# Step 3: Copy new installations
-echo -e "${YELLOW}Step 2: Installing new configurations...${NC}"
+# Step 1: Sync repo entries
+echo -e "${YELLOW}Step 1: Installing repo entries (leaving other entries untouched)...${NC}"
 for dir in "${DIRS[@]}"; do
     source_dir="$SCRIPT_DIR/$dir"
     target_dir="$CLAUDE_DIR/$dir"
 
-    if [ -d "$source_dir" ]; then
-        echo "  - Copying $dir to $target_dir"
-        cp -R "$source_dir" "$CLAUDE_DIR/"
-        # The skills folder's top-level README.md is repo documentation, not a skill
-        if [ "$dir" = "skills" ] && [ -f "$target_dir/README.md" ]; then
-            echo "  - Skipping $dir/README.md (repo docs only)"
-            rm -f "$target_dir/README.md"
-        fi
-    else
+    if [ ! -d "$source_dir" ]; then
         echo -e "  - ${RED}Warning: $source_dir not found, skipping${NC}"
+        continue
     fi
+
+    mkdir -p "$target_dir"
+    for entry_path in "$source_dir"/* "$source_dir"/.[!.]*; do
+        [ -e "$entry_path" ] || continue
+        entry="$(basename "$entry_path")"
+        # The skills folder's top-level README.md is repo documentation, not a skill
+        if [ "$dir" = "skills" ] && [ "$entry" = "README.md" ]; then
+            continue
+        fi
+        rm -rf "${target_dir:?}/$entry"
+        cp -R "$entry_path" "$target_dir/"
+        NEW_MANIFEST="${NEW_MANIFEST}${dir}/${entry}"$'\n'
+    done
+    echo "  - Synced $dir"
 done
 echo ""
 
-# Step 3: Copy settings.json
+# Step 2: Remove entries installed previously that are no longer in the repo
+echo -e "${YELLOW}Step 2: Removing entries no longer in the repo...${NC}"
+removed=0
+while IFS= read -r rel; do
+    [ -n "$rel" ] || continue
+    if ! printf '%s' "$NEW_MANIFEST" | grep -Fxq -- "$rel"; then
+        echo "  - Removing $CLAUDE_DIR/$rel"
+        rm -rf "${CLAUDE_DIR:?}/$rel"
+        removed=$((removed + 1))
+    fi
+done <<< "$OLD_MANIFEST"
+if [ "$removed" -eq 0 ]; then
+    echo "  - Nothing to remove"
+fi
+printf '%s' "$NEW_MANIFEST" > "$MANIFEST"
+echo ""
+
+# Step 3: Copy settings.json, preserving plugin settings
 echo -e "${YELLOW}Step 3: Installing settings.json...${NC}"
 SETTINGS_SOURCE="$SCRIPT_DIR/settings.json"
 SETTINGS_TARGET="$CLAUDE_DIR/settings.json"
@@ -67,9 +89,25 @@ if [ -f "$SETTINGS_SOURCE" ]; then
     if [ -f "$SETTINGS_TARGET" ]; then
         echo "  - Backing up existing settings.json to settings.json.bak"
         cp "$SETTINGS_TARGET" "$SETTINGS_TARGET.bak"
+        if command -v jq >/dev/null 2>&1; then
+            echo "  - Merging settings.json (preserving plugin settings)"
+            tmp="$SETTINGS_TARGET.tmp"
+            jq --argjson keys "$PRESERVED_SETTINGS_KEYS" --slurpfile old "$SETTINGS_TARGET.bak" '
+                $old[0] as $o
+                | reduce $keys[] as $k (.;
+                    if ($o[$k] != null or .[$k] != null)
+                    then .[$k] = (($o[$k] // {}) + (.[$k] // {}))
+                    else . end)
+            ' "$SETTINGS_SOURCE" > "$tmp"
+            mv "$tmp" "$SETTINGS_TARGET"
+        else
+            echo -e "  - ${RED}Warning: jq not found; plugin settings will NOT be preserved${NC}"
+            cp "$SETTINGS_SOURCE" "$SETTINGS_TARGET"
+        fi
+    else
+        echo "  - Copying settings.json to $SETTINGS_TARGET"
+        cp "$SETTINGS_SOURCE" "$SETTINGS_TARGET"
     fi
-    echo "  - Copying settings.json to $SETTINGS_TARGET"
-    cp "$SETTINGS_SOURCE" "$SETTINGS_TARGET"
 else
     echo -e "  - ${RED}Warning: $SETTINGS_SOURCE not found, skipping${NC}"
 fi
@@ -93,7 +131,7 @@ echo ""
 
 echo -e "${GREEN}Installation complete!${NC}"
 echo ""
-echo "The following have been installed to ~/.claude:"
+echo "The following have been installed to $CLAUDE_DIR:"
 for dir in "${DIRS[@]}"; do
     if [ -d "$SCRIPT_DIR/$dir" ]; then
         echo "  ✓ $dir"

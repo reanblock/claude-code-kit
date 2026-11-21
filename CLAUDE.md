@@ -12,7 +12,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 ./install.sh
 ```
 
-`install.sh` **deletes** the target subdirectories in `~/.claude/` and replaces them with copies from this repo. The synced directories are hardcoded in the `DIRS` array: `skills commands hooks status_lines output-styles agents prompts`. It also copies `settings.json` to `~/.claude/settings.json` (backing up the existing one to `settings.json.bak`). **If you add a new top-level component directory that should ship, add it to the `DIRS` array in `install.sh` — otherwise it will not be installed.**
+`install.sh` syncs the directories in the `DIRS` array (`skills commands hooks status_lines output-styles agents prompts`) **per entry**: only the entries that exist in this repo are replaced in `~/.claude/<dir>/`. Anything installed separately (other skills, `~/.claude/plugins/`) is left alone. Entries it installed are recorded in `~/.claude/.claude-code-kit-manifest`, and the next run deletes any entry that has since been removed from the repo. It also copies `settings.json` to `~/.claude/settings.json` (backing up the existing one to `settings.json.bak`), and uses `jq` to keep the existing `enabledPlugins` and `extraKnownMarketplaces` (the repo wins on conflicts). Set `CLAUDE_DIR=/some/path` to install somewhere else, for example for testing. **If you add a new top-level component directory that should ship, add it to the `DIRS` array in `install.sh` — otherwise it will not be installed.**
 
 Note: the repo's own `settings.json` (root) is the file that gets installed globally; `.claude/settings.local.json` is local-only project config and is not distributed.
 
