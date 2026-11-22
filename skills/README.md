@@ -63,6 +63,28 @@ claude plugins install mattpocock-skills
 - The plugin is enabled in this repo's `settings.json` (`enabledPlugins`), and `install.sh` keeps the plugin and its settings when it runs.
 - Don't also install these skills with `npx skills add mattpocock/skills`, or you'll have every skill twice.
 
+### New project workflow
+
+The general order to follow when starting a new application:
+
+| # | Skill | When |
+|---|---|---|
+| 1 | `/setup-matt-pocock-skills` | Once per repo: sets the issue tracker, triage labels and where docs go. |
+| 2 | `/grill-with-docs` | Before every feature or change. Interviews you and writes `GLOSSARY.md` and ADRs. |
+| 3 | `/prototype` *(optional)* | When a question needs runnable code (logic, state, a UI to see). Use `/handoff` to move it to a fresh session and to bring the findings back. |
+| 4 | `/to-spec` → `/to-tickets` | Multi-session builds only. Keep steps 2–4 in one context window (don't clear or compact). |
+| 5 | `/implement` per ticket (`/clear` between tickets), **or** `/implement-spec` for the whole spec | For a small change, skip step 4 and run `/implement` directly. |
+| 6 | `/retro` | After the build, in the same session. Suggests improvements to the setup, not the code. |
+
+Also useful:
+
+- `/tdd` and `/code-review`: `/implement` runs both, but you can use them on their own too.
+- `/diagnosing-bugs`: for hard bugs. Follow it with `/retro`.
+- `/handoff`: moves work to a new session, directory or colleague.
+- `/wayfinder`: for huge, unclear efforts (e.g. greenfield) before `/to-spec`.
+- `/pr`: Claude uses it automatically when writing a PR body.
+- `/ask-matt`: run it any time to ask which skill fits. Claude won't call it on its own, so type it yourself.
+
 ## External Examples
 
 - [Systematic Debugging](https://www.skills.sh/obra/superpowers/systematic-debugging)
