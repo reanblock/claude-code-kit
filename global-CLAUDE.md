@@ -13,8 +13,13 @@
 - Prefer `yarn` for package management (`yarn add`, `yarn install`)
 
 ## GitHub
-- Never change anything on GitHub unless I explicitly ask you to. This includes creating, editing, commenting on, or closing issues and pull requests, and committing or pushing code.
-- Reading is fine: you may read code, issues, pull requests, and comments.
+- GitHub write access is set per project. Writes include creating, editing, commenting on, or closing issues and PRs, and committing or pushing code.
+- At the start of work on a project, if its `CLAUDE.md` doesn't say, ask whether you may make changes on GitHub. Record my answer (allowed or not allowed) in that project's `CLAUDE.md`, and don't ask again.
+- Reading is always fine: code, issues, pull requests, and comments.
+
+## Slack / Email Messages
+- Keep messages short, simple, direct and clear.
+- Use bullet points, a short sentence or a short paragraph. Never long paragraphs or documents.
 
 ## Testing
 - For any code change, add a test that covers the change.
