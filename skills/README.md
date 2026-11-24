@@ -45,45 +45,10 @@ You can also create your own custom skills using `npx sills`. For details run `n
 | [gha-security-review](./gha-security-review/SKILL.md) | Reviews GitHub Actions workflows for exploitable vulnerabilities (pwn requests, expression injection, secrets and permissions, supply chain), with attack paths and harmless proof-of-concept sketches. Active testing needs explicit authorization. From [antigravity-awesome-skills](https://github.com/sickn33/antigravity-awesome-skills). |
 | [incident-runbook-templates](./incident-runbook-templates/SKILL.md) | Creates structured incident-response runbooks: detection, triage, mitigation, resolution and communication steps, plus escalation paths and recovery actions (e.g. service outages, database connection, replication and disk alerts). From [wshobson/agents](https://github.com/wshobson/agents/tree/main/plugins/incident-response). |
 | [just](./just/SKILL.md) | How to use the `just` command runner to save and run project-specific recipes as a simpler alternative to `make`. |
+| [mattpocock-skills](./mattpocock-skills/README.md) | *(Plugin)* Matt Pocock's composable engineering skills (grilling, spec and ticket flows, TDD, bug diagnosis, code review, PR writing), installed as a Claude Code plugin. Includes install notes plus the greenfield (`/wayfinder`) and feature (`/grill-with-docs`) workflows. |
 | [playwright-bowser](./playwright-bowser/SKILL.md) | Headless browser automation via `playwright-cli` — parallel named sessions, UI testing, screenshots, and scraping without loading MCP tool schemas into context. |
 | [startup-research](./startup-research/SKILL.md) | Researches a startup or product idea and produces a detailed markdown report covering market, competition, go-to-market, and MVP planning. |
 | [story-to-video](./story-to-video/SKILL.md) | Converts narrated prose into a tool-agnostic Markdown shooting script (Asset Bible plus per-scene setting, camera, blocking, dialogue, music, sound) for AI text-to-video generators such as Sora, Runway, Veo, Pika, or Kling. |
-
-## Plugin: mattpocock-skills
-
-[Matt Pocock's skills](https://github.com/mattpocock/skills) are installed as a Claude Code **plugin**, not copied into this repo. They are small, composable engineering skills, including grilling a plan, spec and ticket flows, TDD, diagnosing bugs, code review, domain modelling, PR writing and prototyping. In Claude Code they appear namespaced, e.g. `mattpocock-skills:tdd`.
-
-Install:
-
-```bash
-claude plugins install mattpocock-skills
-```
-
-- Files are stored under `~/.claude/plugins/cache/claude-plugins-official/mattpocock-skills/<version>/`.
-- The plugin is enabled in this repo's `settings.json` (`enabledPlugins`), and `install.sh` keeps the plugin and its settings when it runs.
-- Don't also install these skills with `npx skills add mattpocock/skills`, or you'll have every skill twice.
-
-### New project workflow
-
-The general order to follow when starting a new application:
-
-| # | Skill | When |
-|---|---|---|
-| 1 | `/setup-matt-pocock-skills` | Once per repo: sets the issue tracker, triage labels and where docs go. |
-| 2 | `/grill-with-docs` | Before every feature or change. Interviews you and writes `GLOSSARY.md` and ADRs. |
-| 3 | `/prototype` *(optional)* | When a question needs runnable code (logic, state, a UI to see). Use `/handoff` to move it to a fresh session and to bring the findings back. |
-| 4 | `/to-spec` → `/to-tickets` | Multi-session builds only. Keep steps 2–4 in one context window (don't clear or compact). |
-| 5 | `/implement` per ticket (`/clear` between tickets), **or** `/implement-spec` for the whole spec | For a small change, skip step 4 and run `/implement` directly. |
-| 6 | `/retro` | After the build, in the same session. Suggests improvements to the setup, not the code. |
-
-Also useful:
-
-- `/tdd` and `/code-review`: `/implement` runs both, but you can use them on their own too.
-- `/diagnosing-bugs`: for hard bugs. Follow it with `/retro`.
-- `/handoff`: moves work to a new session, directory or colleague.
-- `/wayfinder`: for huge, unclear efforts (e.g. greenfield) before `/to-spec`.
-- `/pr`: Claude uses it automatically when writing a PR body.
-- `/ask-matt`: run it any time to ask which skill fits. Claude won't call it on its own, so type it yourself.
 
 ## External Examples
 
