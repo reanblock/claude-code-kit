@@ -67,3 +67,7 @@ Conventions all hooks follow:
 ## Not tracked in git
 
 `logs/`, `.claude/data/`, `.playwright-cli/`, and `screenshots/` are gitignored (see `.gitignore`). The `logs/*.json` files are runtime hook output samples, not source.
+
+## GitHub access
+
+Not allowed: don't commit, push, or change issues or PRs for this repo. The user does that themselves.

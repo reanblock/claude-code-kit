@@ -1,0 +1,10 @@
+{
+  "name": "qa",
+  "private": true,
+  "scripts": {
+    "smoke:uat": "./run.sh uat smoke",
+    "full:uat": "./run.sh uat full",
+    "smoke:prod": "./run.sh prod smoke",
+    "full:prod": "./run.sh prod full"
+  }
+}

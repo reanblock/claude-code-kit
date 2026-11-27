@@ -1,0 +1,12 @@
+{
+  "project": "my-app",
+  "environments": {
+    "uat": { "url": "https://uat.example.com" },
+    "prod": { "url": "https://www.example.com" }
+  },
+  "auth": {
+    "required": false,
+    "loginPath": "/login"
+  },
+  "testDataPrefix": "QA-TEST"
+}
